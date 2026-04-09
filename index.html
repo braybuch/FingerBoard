@@ -565,7 +565,7 @@ body.focus-mode .kb-panel {
 
 <div class="input-actions" id="dev-buttons">
   <button onclick="skipTutorial()">Skip</button>
-  <button onclick="toggleInputMode()">Hide Keyboard</button>
+  <button onclick="toggleInputMode()">Show input row</button>
 </div>
 
 <div class="input-actions" id="user-buttons">
@@ -1032,7 +1032,6 @@ function flashFinger(index) {
 
 function toggleKb() {
   document.getElementById("kb-panel").classList.toggle("open");
-  document.querySelector(".input-row").style.display = "none";
 }
 
 function skipTutorial() {
@@ -1053,13 +1052,11 @@ function toggleInputMode() {
   keyboardVisible = !keyboardVisible;
 
   if (keyboardVisible) {
-    kbPanel.classList.add("open");
     inputRow.style.display = "none";
-    btn.textContent = "Hide Keyboard";
+    btn.textContent = "Show input row";
   } else {
-    kbPanel.classList.remove("open");
     inputRow.style.display = "flex";
-    btn.textContent = "Show Keyboard";
+    btn.textContent = "Hide input row";
     document.getElementById("typed-input").focus();
   }
 }
@@ -1106,7 +1103,6 @@ function toggleFocusMode() {
     ".mode-label",
     ".progress-wrap",
     ".feedback",
-    ".input-row",
     "#dev-buttons",
     ".site-footer"
   ];
