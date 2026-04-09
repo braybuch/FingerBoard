@@ -50,12 +50,14 @@ need
 next
 of
 one
+pattern
 patterns
 practice
 practicing
 predict
 press
 presses
+quick
 quickly
 screen
 soon
@@ -179,7 +181,6 @@ played
 progress
 programmer
 project
-quick
 quiet
 rain
 rather
@@ -540,7 +541,6 @@ method
 approach
 process
 structure
-pattern
 rule
 law
 freedom

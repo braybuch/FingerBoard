@@ -412,7 +412,7 @@ const TUTORIAL = [
   "welcome to fingerboard",
   "press enter when the word on screen is correct",
   "press next if the word on screen is not correct",
-  "fingerboard lets you type full words more efficiently",
+  "fingerboard makes typing more efficient",
   "you do not need to type every letter", 
   "the system will predict for you",
   "after a few presses the most likely word will usually appear",
@@ -835,6 +835,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   if (isGitHubPages) {
     document.getElementById("dev-buttons").style.display = "none";
+    document.querySelector(".input-row").style.display = "none";
   }
 });
 
