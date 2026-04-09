@@ -411,7 +411,7 @@ const TUTORIAL = [
   "hi",
   "welcome to fingerboard",
   "press enter when the word on screen is correct",
-  "press next to choose a different matching word",
+  "press next if the word on screen is not correct",
   "fingerboard lets you type full words more efficiently",
   "you do not need to type every letter", 
   "the system will predict for you",
@@ -712,6 +712,7 @@ function kbFinger(index) {
 }
 
 function kbConfrim() {
+  totalKeystrokes++;
   const word = kbSuggestions[0];
   if (!word) return;
   document.getElementById("typed-input").value = word;
@@ -719,6 +720,7 @@ function kbConfrim() {
 }
 
 function kbNext() {
+  totalKeystrokes++;
   if (!kbSig) return;
 
   if (kbBrowseIdx === -1) {
