@@ -308,6 +308,18 @@
     margin-top: 4px;
   }
 
+  .input-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    width: 100%;
+    max-width: 680px;
+  }
+
+  .input-actions button {
+    flex: 1;
+  }
+
 </style>
 </head>
 <body onload="toggleKb()">
@@ -319,6 +331,10 @@
     <div class="stat-value" id="wpm-display">—</div>
     <div class="stat-label">WPM</div>
   </div>
+  <div class="stat">
+  <div class="stat-value" id="kpc-display">—</div>
+  <div class="stat-label">KPC</div>
+</div>
   <div class="stat">
     <div class="stat-value" id="acc-display">—</div>
     <div class="stat-label">Accuracy</div>
@@ -342,7 +358,7 @@
 
 <div class="prompt-box" id="prompt-box"></div>
 
-<div class="input-row" style="display: none; >
+<div class="input-row">
   <input type="text" id="typed-input" placeholder="start typing..." autocomplete="off" autocorrect="off" spellcheck="false" />
 </div>
 
@@ -382,6 +398,11 @@
 
 </div>
 
+<div class="input-actions" id="dev-buttons">
+  <button onclick="skipTutorial()">Skip</button>
+  <button onclick="toggleInputMode()">Hide Keyboard</button>
+</div>
+
 <script>
 /* =========================================================
    TRAINER LOGIC
@@ -389,15 +410,15 @@
 const TUTORIAL = [
   "hi",
   "welcome to fingerboard",
-  "fingerboard lets you type full words with one hand",
-  "you do not need to type every letter", 
-  "the system will predict for you",
-  "after a few presses the most likely word will appear",
   "press confirm when the word on screen is correct",
   "press next to choose a different matching word",
+  "fingerboard lets you type full words more efficiently",
+  "you do not need to type every letter", 
+  "the system will predict for you",
+  "after a few presses the most likely word will usually appear",
   "common words become familiar very quickly with practice",
-  "soon you will enter longer words with fewer movements",
-  "fingerboard is designed for fast efficient and comfortable typing",
+  "soon you will enter longer words without looking at the keyboard",
+  "fingerboard is designed for comfortable and quick typing",
   "now begin practicing and let your fingers learn the patterns"
 ];
 
@@ -435,6 +456,9 @@ let totalAttempts   = 0;
 let correctAttempts = 0;
 let streak          = 0;
 
+let totalKeystrokes = 0;
+let totalCharacters = 0;
+
 function updateProgress() {
   const fill  = document.getElementById("progress-fill");
   const label = document.getElementById("progress-label");
@@ -464,11 +488,6 @@ function newRound() {
 
   if (mode === "tutorial") {
     sentence = TUTORIAL[tutorialIndex];
-    // Auto-open the on-screen keyboard on the last tutorial sentence
-    // Update: Now it opens at page load but i dont want to break anything so i leave this 
-    if (tutorialIndex === TUTORIAL.length - 1) {
-      document.getElementById("kb-panel").classList.add("open");
-    }
   } else {
     sentence = PRACTICE[Math.floor(Math.random() * PRACTICE.length)];
   }
@@ -507,6 +526,7 @@ function submitAttempt() {
   totalAttempts++;
 
   if (typed === expected) {
+    totalCharacters += typed.length;
     correctAttempts++;
     streak++;
     wordIndex++;
@@ -515,8 +535,10 @@ function submitAttempt() {
       const elapsed = (Date.now() - startTime) / 1000 / 60;
       const wpm = Math.round(currentWords.length / elapsed);
       const acc = Math.round((correctAttempts / totalAttempts) * 100);
+      const kpc = totalCharacters > 0 ? (totalKeystrokes / totalCharacters).toFixed(2) : " ";
       document.getElementById("wpm-display").textContent = wpm;
       document.getElementById("acc-display").textContent = acc + "%";
+      document.getElementById("kpc-display").textContent = kpc;
       document.getElementById("streak-display").textContent = streak;
 
       if (mode === "tutorial") {
@@ -583,45 +605,51 @@ let signatureMap = {};
 
 const BUILTIN_WORDS = [
   // tutorial sentence words first — guaranteed first predictions
-  "fingerboard","is","a","one","handed","typing","device",
-  "it","uses","only","four","finger","keys","to","type","every","letter",
-  "each","assigned","distinct","group","of","letters",
-  "the","index","covers","q","w","e","r","t","y","u",
-  "middle","a","s","d","f","g","z","m",
-  "ring","h","i","b","n","c","v",
-  "pinky","o","p","j","k","l","x",
-  "word","press","in","order",
-  "predicts","your","after","press",
-  "confirm","when","correct","appears",
-  "next","cycle","through","alternative","words",
-  "try","on","screen","below","get","started",
+  "hi",
+  "welcome","to","fingerboard",
+  "press","confirm","when","the","word","on","screen","is","correct",
+  "next","choose","a","different","matching","full","words","lets","you","type","more","efficiently",
+  "do","not","need","every","letter",
+  "system","will","predict","for",
+  "after","few","presses","most","likely","usually","appear",
+  "common","become","familiar","very","quickly","with","practice",
+  "soon","enter","longer","without","looking","at","keyboard",
+  "designed","comfortable","and","quick","typing",
+  "now","begin","practicing","let","your","fingers","learn","patterns",
+
   // practice sentence words
-  "concept","predictive","text","reduces","friction",
-  "input","methods","should","feel","natural","and","efficient",
-  "controls","letters","algorithm","sequences",
-  "with","whole","alphabet","signature","guides","prediction",
-  "fewer","keystrokes","produce","complete","instantly",
-  "brain","adapts","quickly","new","patterns",
-  "practice","builds","muscle","memory","for",
-  "frequency","shapes","which","suggestion","comes","first",
-  "outputs","without","visible","screen",
-  "belongs","exactly","updates","additional",
-  "advance","sentence","alternatives","wrong",
-  "compact","hardware","can","support","rich",
-  "handles","most","frequent","requires","learning","groups",
-  "prioritises","speed","comfort","depends","underlying","dictionary",
+  "brown","fox","jumps","over","lazy","dog","near","river","bank",
+  "day","helps","improve","both","speed","accuracy","time",
+  "calm","morning","breeze","carried","leaves","across","empty","parking","lot",
+  "she","packed","her","notebook","headphones","charger","before","leaving","home",
+  "bright","stars","filled","sky","as","city","lights","faded","in","distance",
+  "learning","steady","takes",
+  "small","coffee","shop","corner","serves","fresh","bread",
+  "they","finished","reading","article","just","meeting","began","online",
+  "rain","tapped","softly","against","window","during","quiet","afternoon","class",
+  "simple","habits","repeated","daily","often","lead","remarkable","long","term","progress",
+  "bicycle","leaned","fence","beside","row","blooming","flowers",
+  "several","students","stayed","late","complete","their","science","project","together",
+  "clear","instructions","make","complex","tasks","easier","understand",
+  "train","arrived","exactly","despite","heavy","snow","last","night",
+  "oranges","apples","were","arranged","neatly","wooden","market","baskets",
+  "well","test","should","balance","challenge","readability",
+  "old","library","clock","chimed","twice","visitors","entered","through","hall",
+  "music","played","background","while","programmer","wrote","code",
+  "each","round","encourage","focus","rather","than","rushed","mistakes",
+  "winter","sunlight","reflected","brightly","off","frozen","lake","behind","school",
+
   // general high-frequency fill
-  "be","that","have","not","he","as","you","do","at","this",
-  "but","his","by","they","we","say","her","she","or","an","will","my",
-  "all","would","there","their","what","so","up","out","if","about","who",
-  "go","me","make","like","time","no","just","him","know","take",
+  "be","that","have","he","but","his","by","we","say","or","an","my",
+  "all","would","there","what","so","up","out","if","about","who",
+  "go","me","like","no","him","know","take",
   "people","into","year","good","some","could","them","see","other",
-  "than","then","now","look","come","its","over","think","also",
-  "back","use","two","how","our","work","well","way","even","want",
-  "because","any","these","give","day","us","great","need",
+  "then","look","come","its","think","also",
+  "back","use","two","how","our","work","way","even","want",
+  "because","any","these","give","us","great",
   "hand","high","place","hold","turn","here","why","help",
-  "put","old","same","tell","follow","came","show","form","small","set",
-  "never","open","seem","together","begin","got","walk",
+  "put","same","tell","follow","came","show","form","set",
+  "never","open","seem","got","walk"
 ];
 
 function buildMaps(words) {
@@ -676,6 +704,7 @@ function kbUpdatePredicting() {
 }
 
 function kbFinger(index) {
+  totalKeystrokes++;
   kbSig += index;
   kbUpdatePredicting();
   kbRenderGhost();
@@ -738,9 +767,15 @@ function kbRenderGhost() {
   ph.style.display = "none";
 
   if (!word) {
-    document.getElementById("ghost-typed").textContent   = kbSig;
-    document.getElementById("ghost-pipe").textContent    = "|";
-    document.getElementById("ghost-pending").textContent = "";
+    document.getElementById("ghost-typed").textContent = "";
+    document.getElementById("ghost-pipe").textContent = "";
+    document.getElementById("ghost-pending").textContent = "[no match]";
+
+    // Auto-reset after brief pause
+    setTimeout(() => {
+      kbReset();
+    }, 700);
+
     return;
   }
 
@@ -762,6 +797,44 @@ function flashFinger(index) {
 function toggleKb() {
   document.getElementById("kb-panel").classList.toggle("open");
 }
+
+function skipTutorial() {
+  mode = "practice";
+  tutorialIndex = TUTORIAL.length;
+  practicesDone = 0;
+  setFeedback("tutorial skipped", "good");
+  newRound();
+}
+
+let keyboardVisible = true;
+
+function toggleInputMode() {
+  const kbPanel = document.getElementById("kb-panel");
+  const inputRow = document.querySelector(".input-row");
+  const btn = event.target;
+
+  keyboardVisible = !keyboardVisible;
+
+  if (keyboardVisible) {
+    kbPanel.classList.add("open");
+    inputRow.style.display = "none";
+    btn.textContent = "Hide Keyboard";
+  } else {
+    kbPanel.classList.remove("open");
+    inputRow.style.display = "flex";
+    btn.textContent = "Show Keyboard";
+    document.getElementById("typed-input").focus();
+  }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  const isGitHubPages =
+    location.hostname.includes("github.io");
+
+  if (isGitHubPages) {
+    document.getElementById("dev-buttons").style.display = "none";
+  }
+});
 
 updateProgress();
 newRound();
