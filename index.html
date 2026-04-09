@@ -1061,9 +1061,11 @@ function toggleInputMode() {
   keyboardVisible = !keyboardVisible;
 
   if (keyboardVisible) {
+    toggleKb();
     inputRow.style.display = "none";
     btn.textContent = "Show input row";
   } else {
+    toggleKb();
     inputRow.style.display = "flex";
     btn.textContent = "Hide input row";
     document.getElementById("typed-input").focus();
