@@ -477,6 +477,15 @@ body.focus-mode .kb-panel {
   50%  { transform: scale(1.025); }
   100% { transform: scale(1); }
 }
+
+button,
+input,
+.kb-finger-btn,
+.kb-lock-btn,
+.kb-page-btn {
+  touch-action: manipulation;
+}
+
 </style>
 </head>
 <body onload="toggleKb()">
