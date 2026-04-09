@@ -26,6 +26,8 @@ now
 correct
 different
 efficient
+word
+words
 every
 fast
 familiar
@@ -68,8 +70,6 @@ very
 when
 with
 will
-word
-words
 accuracy
 across
 afternoon

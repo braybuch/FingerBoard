@@ -878,28 +878,100 @@ fetch("dictionary.txt")
   console.error("Dictionary load failed:", err);
 });
 
-/* ---- Engine state ---- */
-let kbSig         = "";
-let kbBrowseIdx   = -1;
-let kbSuggestions = ["", ""];
-let kbPageMatches = [];
+/* =========================================================
+   ENGINE STATE  (ported from FingerboardModel.java)
+   ---------------------------------------------------------
+   browseIndex semantics (mirrors Java int browseIndex):
+     -1  → Predicting  (prefix-peek mode, no exact-match list yet)
+     ≥0  → Browsing    (exact-match list captured, index tracks Slot 2)
+   ========================================================= */
+let kbSig           = "";          // finger-press sequence so far
+let kbBrowseIndex   = -1;          // -1 = Predicting, ≥0 = Browsing
+let kbSuggestions   = ["", ""];    // [Slot1, Slot2]  shown to user
+let kbExactMatches  = [];          // captured once on Handoff, reused while Browsing
 
-function kbUpdatePredicting() {
-  const picks = vocabPeek(kbSig, 2);
-  kbSuggestions[0] = picks[0] || "";
-  kbSuggestions[1] = picks[1] || "";
-  kbBrowseIdx   = -1;
-  kbPageMatches = [];
-}
-
+/* Called whenever a finger button is pressed.
+   Mirrors Java: addInput() — snaps back to Predicting and calls updatePredicting(). */
 function kbFinger(index) {
   totalKeystrokes++;
   kbSig += index;
+
+  // Snap back to Predicting (discard any in-progress browse)
+  kbBrowseIndex  = -1;
+  kbExactMatches = [];
+
   kbUpdatePredicting();
   kbRenderGhost();
   flashFinger(index);
 }
 
+/* Mirrors Java: updatePredicting() — prefix-peek, fills both slots. */
+function kbUpdatePredicting() {
+  const picks = vocabPeek(kbSig, 2);
+  kbSuggestions[0] = picks[0] || "";
+  kbSuggestions[1] = picks[1] || "";
+}
+
+/* kbNext() — two-state machine mirroring FingerboardModel.nextPage().
+   HANDOFF  (kbBrowseIndex === -1): first Next press after finger input.
+   BROWSING (kbBrowseIndex  >=  0): subsequent Next presses. */
+function kbNext() {
+  totalKeystrokes++;
+  if (!kbSig) return;
+
+  if (kbBrowseIndex === -1) {
+    /* ── HANDOFF: Predicting → Browsing ── */
+
+    // Capture exact-match list once; reused for the whole browse session.
+    kbExactMatches = vocabRead(kbSig);
+
+    // Remember what the user already saw so we don't show it again.
+    const alreadySeen = new Set(
+      [kbSuggestions[0], kbSuggestions[1]].filter(Boolean)
+    );
+
+    // Promote old Slot 2 to Slot 1 (what the user was peeking at).
+    kbSuggestions[0] = kbSuggestions[1];
+
+    // Find the first exact match the user hasn't seen yet for Slot 2.
+    let matchIdx = 0;
+    while (
+      matchIdx < kbExactMatches.length &&
+      alreadySeen.has(kbExactMatches[matchIdx])
+    ) {
+      matchIdx++;
+    }
+
+    kbSuggestions[1] = (matchIdx < kbExactMatches.length)
+      ? kbExactMatches[matchIdx]
+      : "";
+    kbBrowseIndex = matchIdx;
+
+  } else {
+    /* ── BROWSING: advance one step ── */
+
+    // Promote Slot 2 → Slot 1.
+    kbSuggestions[0] = kbSuggestions[1];
+
+    // Advance and skip any entry that duplicates the new Slot 1.
+    kbBrowseIndex++;
+    if (
+      kbBrowseIndex < kbExactMatches.length &&
+      kbExactMatches[kbBrowseIndex] === kbSuggestions[0]
+    ) {
+      kbBrowseIndex++;
+    }
+
+    kbSuggestions[1] = (kbBrowseIndex < kbExactMatches.length)
+      ? kbExactMatches[kbBrowseIndex]
+      : "";
+  }
+
+  kbRenderGhost();
+  updateTutorialHint();
+}
+
+/* Confirm (Lock) — commit Slot 1 to the text input and submit. */
 function kbConfrim() {
   totalKeystrokes++;
   const word = kbSuggestions[0];
@@ -908,43 +980,17 @@ function kbConfrim() {
   submitAttempt();
 }
 
-function kbNext() {
-  totalKeystrokes++;
-  if (!kbSig) return;
-
-  if (kbBrowseIdx === -1) {
-    // Enter browsing mode
-    kbPageMatches = vocabRead(kbSig);
-
-    // Start from current visible first suggestion
-    kbBrowseIdx = kbPageMatches.indexOf(kbSuggestions[0]);
-    if (kbBrowseIdx < 0) kbBrowseIdx = 0;
-  } else {
-    // Advance one step
-    kbBrowseIdx++;
-  }
-
-  // Clamp to valid range
-  if (kbBrowseIdx >= kbPageMatches.length) {
-    kbBrowseIdx = kbPageMatches.length - 1;
-  }
-
-  kbSuggestions[0] = kbPageMatches[kbBrowseIdx] || "";
-  kbSuggestions[1] = kbPageMatches[kbBrowseIdx + 1] || "";
-
-  kbRenderGhost();
-}
-
+/* Reset all engine state — called after a word is committed or on kbFinger. */
 function kbReset() {
   clearTutorialGlow();
-  kbSig         = "";
-  kbBrowseIdx   = -1;
-  kbSuggestions = ["", ""];
-  kbPageMatches = [];
+  kbSig          = "";
+  kbBrowseIndex  = -1;
+  kbSuggestions  = ["", ""];
+  kbExactMatches = [];
   kbRenderGhost();
-  
 }
 
+/* Render the ghost word display from current Slot 1 suggestion. */
 function kbRenderGhost() {
   const word   = kbSuggestions[0];
   const sigLen = kbSig.length;
@@ -961,15 +1007,12 @@ function kbRenderGhost() {
   ph.style.display = "none";
 
   if (!word) {
-    document.getElementById("ghost-typed").textContent = "";
-    document.getElementById("ghost-pipe").textContent = "";
+    document.getElementById("ghost-typed").textContent   = "";
+    document.getElementById("ghost-pipe").textContent    = "";
     document.getElementById("ghost-pending").textContent = "[no match]";
 
-    // Auto-reset after brief pause
-    setTimeout(() => {
-      kbReset();
-    }, 700);
-
+    // Auto-reset after brief pause so user isn't stuck
+    setTimeout(() => { kbReset(); }, 700);
     return;
   }
 
@@ -1124,14 +1167,12 @@ function updateTutorialHint() {
   const expectedSig = getSignature(expected);
 
   if (kbSuggestions[0] === expected) {
-    console.log("  → branch: ENTER glow");
     const enterBtn = document.querySelector(".kb-lock-btn");
     if (enterBtn) enterBtn.classList.add("tutorial-glow");
     return;
   }
 
   if (kbSig.length < expectedSig.length) {
-    console.log("  → branch: FINGER glow");
     const nextChar = expected[kbSig.length]?.toLowerCase();
     const finger = CHAR_TO_KEY[nextChar];
     if (finger !== undefined) {
@@ -1141,7 +1182,6 @@ function updateTutorialHint() {
     return;
   }
 
-  console.log("  → branch: NEXT glow");
   const nextBtn = document.querySelector(".kb-page-btn");
   if (nextBtn) nextBtn.classList.add("tutorial-glow");
 }
