@@ -3,329 +3,318 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FingerBoard Teaches Typing</title>
+<title>FingerBoard Beta</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    font-family: system-ui, sans-serif;
-    background: #f5f4f0;
-    color: #1a1a1a;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem 1rem;
-  }
+body {
+  background: #f6f7fb;
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  color: #1a1a1a;
+  min-height: 100vh;
+}
 
-  h1 {
-    font-size: 1.1rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    color: #555;
-    margin-bottom: 2rem;
-  }
+/* Main app card */
+.app-shell {
+  max-width: 820px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow:
+    0 8px 30px rgba(0,0,0,0.06),
+    0 2px 8px rgba(0,0,0,0.04);
+}
 
-  .stats {
-    display: flex;
-    gap: 2rem;
-    margin-bottom: 2rem;
-  }
+/* Header */
+.app-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
 
-  .stat { text-align: center; }
+.app-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
 
-  .stat-value {
-    font-size: 1.8rem;
-    font-weight: 500;
-    color: #1a1a1a;
-    line-height: 1;
-  }
+.app-subtitle {
+  margin-top: 0.4rem;
+  font-size: 0.95rem;
+  color: #666;
+}
 
-  .stat-label {
-    font-size: 0.75rem;
-    color: #888;
-    margin-top: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
+/* Stats cards */
+.stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
 
-  .prompt-box {
-    background: #fff;
-    border: 1px solid #e0ddd6;
-    border-radius: 10px;
-    padding: 1.25rem 1.25rem;
-    width: 100%;
-    max-width: 680px;
-    margin-bottom: 1.25rem;
-    min-height: 72px;
-    line-height: 1.9;
-    font-size: clamp(1rem, 3.5vw, 1.25rem);
-    letter-spacing: 0.01em;
-  }
+.stat {
+  flex: 1;
+  background: #fafafe;
+  border: 1px solid #ececff;
+  border-radius: 14px;
+  padding: 1rem;
+  text-align: center;
+}
 
-  .word { display: inline; }
-  .word-pending  { color: #aaa; }
-  .word-correct  { color: #2e7d32; }
-  .word-wrong    { color: #c62828; text-decoration: underline wavy #c62828; }
-  .word-current  { color: #1a1a1a; background: #f0edff; border-radius: 4px; padding: 0 3px; }
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
 
-  .input-row {
-    display: flex;
-    gap: 0.75rem;
-    width: 100%;
-    max-width: 680px;
-    margin-bottom: 1.25rem;
-  }
+.stat-label {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
 
-  #typed-input {
-    flex: 1;
-    padding: 0.65rem 1rem;
-    font-size: 1.1rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background: #fff;
-    outline: none;
-    transition: border-color 0.15s;
-  }
+/* Labels */
+.mode-label {
+  font-size: 0.72rem;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  margin-bottom: 0.6rem;
+  text-align: center;
+}
 
-  #typed-input:focus { border-color: #7f77dd; }
+/* Progress */
+.progress-wrap {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto 1.5rem auto;
+}
 
-  button {
-    padding: 0.65rem 1.25rem;
-    font-size: 0.95rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background: #fff;
-    cursor: pointer;
-    transition: background 0.12s, border-color 0.12s;
-    color: #1a1a1a;
-  }
+.progress-track {
+  width: 100%;
+  height: 5px;
+  background: #e8e6e0;
+  border-radius: 99px;
+  overflow: hidden;
+}
 
-  button:hover { background: #f0edff; border-color: #7f77dd; }
+.progress-fill {
+  height: 100%;
+  background: #534ab7;
+  border-radius: 99px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
 
-  .feedback {
-    font-size: 0.9rem;
-    color: #555;
-    min-height: 1.4em;
-    margin-bottom: 1rem;
-    text-align: center;
-  }
+.progress-label {
+  font-size: 0.72rem;
+  color: #bbb;
+  text-align: right;
+  margin-top: 4px;
+}
 
-  .feedback.good { color: #2e7d32; }
-  .feedback.bad  { color: #c62828; }
+/* Feedback */
+.feedback {
+  font-size: 0.9rem;
+  color: #555;
+  min-height: 1.4em;
+  margin-bottom: 1rem;
+  text-align: center;
+}
 
-  .panel-toggle {
-    font-size: 0.8rem;
-    color: #888;
-    cursor: pointer;
-    text-decoration: underline dotted;
-    margin-bottom: 0.5rem;
-    background: none;
-    border: none;
-    padding: 0;
-  }
+.feedback.good { color: #2e7d32; }
+.feedback.bad  { color: #c62828; }
 
-  .panel-toggle:hover { color: #534ab7; background: none; border: none; }
+/* Prompt box */
+.prompt-box {
+  background: #fcfcff;
+  border: 1px solid #e7e7f3;
+  border-radius: 14px;
+  padding: 1.2rem;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  margin: 0 auto 1.5rem auto;
+  width: 100%;
+  max-width: 680px;
+  min-height: 72px;
+}
 
-  /* ---- On-screen keyboard panel ---- */
-  .kb-panel {
-    display: none;
-    background: #fff;
-    border: 1px solid #e0ddd6;
-    border-radius: 10px;
-    padding: 1rem;
-    width: 100%;
-    max-width: 680px;
-    margin-top: 0.5rem;
-  }
+.word-pending  { color: #aaa; }
+.word-correct  { color: #2e7d32; }
+.word-wrong    { color: #c62828; text-decoration: underline wavy #c62828; }
+.word-current  {
+  color: #1a1a1a;
+  background: #f0edff;
+  border-radius: 4px;
+  padding: 0 3px;
+}
 
-  .kb-panel.open { display: block; }
+/* Input row */
+.input-row {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto 1.25rem auto;
+}
 
-  .kb-layout {
-    display: flex;
-    gap: 0.6rem;
-    align-items: stretch;
-  }
+#typed-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  font-size: 1.1rem;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  background: #fff;
+  outline: none;
+}
 
-  .kb-ghost {
-    flex: 1;
-    min-width: 0;
-    background: #f9f8f5;
-    border: 1px solid #e0ddd6;
-    border-radius: 8px;
-    padding: 0.6rem 0.75rem;
-    font-size: clamp(1rem, 4vw, 1.4rem);
-    font-family: monospace;
-    min-height: 52px;
-    display: flex;
-    align-items: center;
-    letter-spacing: 0.04em;
-    position: relative;
-    overflow: hidden;
-  }
+#typed-input:focus {
+  border-color: #7f77dd;
+}
 
-  .kb-ghost-placeholder {
-    color: #ccc;
-    font-size: 0.85rem;
-    font-family: system-ui, sans-serif;
-    letter-spacing: 0;
-    position: absolute;
-    pointer-events: none;
-  }
+/* Buttons */
+button {
+  border: none;
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.08s ease, opacity 0.15s ease;
+}
 
-  .ghost-typed   { color: #1a1a1a; }
-  .ghost-pipe    { color: #534ab7; font-weight: 500; }
-  .ghost-pending { color: #bbb; }
+button:hover { opacity: 0.95; }
+button:active { transform: translateY(1px); }
 
-  .kb-fingers {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    flex-shrink: 0;
-  }
+.confirm-btn {
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
 
-  .kb-finger-btn {
-    width: clamp(80px, 22vw, 120px);
-    padding: 0.45rem 0.4rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background: #fff;
-    cursor: pointer;
-    transition: background 0.1s, border-color 0.1s, transform 0.07s;
-    text-align: center;
-    color: #1a1a1a;
-    -webkit-tap-highlight-color: transparent;
-  }
+.next-btn {
+  background: #f0f0f7;
+}
 
-  .kb-finger-btn:hover  { background: #f0edff; border-color: #7f77dd; }
-  .kb-finger-btn:active,
-  .kb-finger-btn.active { background: #534ab7; color: #fff; border-color: #3c3489; transform: scale(0.96); }
+/* Keyboard panel */
+.kb-panel {
+  display: none;
+  background: #ffffff;
+  border: 1px solid #e8e8f0;
+  border-radius: 18px;
+  box-shadow:
+    0 4px 14px rgba(0,0,0,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+  padding: 1.25rem;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+}
 
-  .finger-name {
-    font-weight: 500;
-    font-size: clamp(0.55rem, 1.8vw, 0.68rem);
-    color: inherit;
-    opacity: 0.6;
-    display: block;
-    margin-bottom: 3px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
+.kb-panel.open { display: block; }
 
-  .finger-row {
-    display: flex;
-    justify-content: center;
-    gap: 3px;
-    line-height: 1;
-  }
+.kb-layout {
+  display: flex;
+  gap: 0.6rem;
+  align-items: stretch;
+}
 
-  .finger-row + .finger-row {
-    margin-top: 2px;
-  }
+/* Ghost bar */
+.kb-ghost {
+  flex: 1;
+  min-width: 0;
+  background: #f7f7fc;
+  border: 1px solid #e6e6f2;
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  font-size: 1.15rem;
+  font-family: monospace;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
 
-  .fl {
-    font-family: monospace;
-    font-size: clamp(0.65rem, 2vw, 0.8rem);
-    color: inherit;
-    opacity: 0.8;
-  }
+.kb-ghost-placeholder {
+  color: #ccc;
+  font-size: 0.85rem;
+  position: absolute;
+}
 
-  .kb-thumbs {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    flex-shrink: 0;
-  }
+.ghost-typed   { color: #1a1a1a; }
+.ghost-pipe    { color: #534ab7; font-weight: 500; }
+.ghost-pending { color: #bbb; }
 
-  .kb-lock-btn {
-    padding: 0.45rem 0.7rem;
-    font-size: clamp(0.78rem, 2.5vw, 0.9rem);
-    font-weight: 500;
-    background: #534ab7;
-    color: #fff;
-    border: 1px solid #3c3489;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.1s;
-    white-space: nowrap;
-    -webkit-tap-highlight-color: transparent;
-  }
+/* Finger buttons */
+.kb-fingers {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
 
-  .kb-lock-btn:hover  { background: #3c3489; border-color: #3c3489; }
-  .kb-lock-btn:active { background: #3c3489; }
+.kb-finger-btn {
+  width: clamp(80px, 22vw, 120px);
+  padding: 0.45rem 0.4rem;
+  border-radius: 16px;
+  border: none;
+  background: #fff;
+  cursor: pointer;
+  box-shadow:
+    0 3px 8px rgba(0,0,0,0.08),
+    inset 0 -2px 0 rgba(0,0,0,0.06);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
 
-  .kb-page-btn {
-    padding: 0.45rem 0.7rem;
-    font-size: clamp(0.78rem, 2.5vw, 0.9rem);
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background: #fff;
-    cursor: pointer;
-    transition: background 0.1s;
-    color: #1a1a1a;
-    white-space: nowrap;
-    -webkit-tap-highlight-color: transparent;
-  }
+.kb-finger-btn:active,
+.kb-finger-btn.active {
+  transform: translateY(1px);
+}
 
-  .kb-page-btn:hover  { background: #f0edff; border-color: #7f77dd; }
-  .kb-page-btn:active { background: #f0edff; }
+.finger-row {
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+}
 
-  .mode-label {
-    font-size: 0.72rem;
-    color: #aaa;
-    text-transform: uppercase;
-    letter-spacing: 0.09em;
-    margin-bottom: 0.6rem;
-    text-align: center;
-  }
+.fl {
+  font-family: monospace;
+  font-size: clamp(0.65rem, 2vw, 0.8rem);
+  opacity: 0.8;
+}
 
-  .progress-wrap {
-    width: 100%;
-    max-width: 680px;
-    margin-bottom: 1.5rem;
-  }
+/* Thumb buttons */
+.kb-thumbs {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
 
-  .progress-track {
-    width: 100%;
-    height: 5px;
-    background: #e8e6e0;
-    border-radius: 99px;
-    overflow: hidden;
-  }
+.kb-lock-btn {
+  background: #534ab7;
+  color: white;
+}
 
-  .progress-fill {
-    height: 100%;
-    background: #534ab7;
-    border-radius: 99px;
-    transition: width 0.4s ease;
-    width: 0%;
-  }
+.kb-page-btn {
+  background: #f0f0f7;
+}
 
-  .progress-label {
-    font-size: 0.72rem;
-    color: #bbb;
-    text-align: right;
-    margin-top: 4px;
-  }
+/* Action buttons */
+.input-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin: 1rem auto 0 auto;
+  width: 100%;
+  max-width: 680px;
+}
 
-  .input-actions {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: 1rem;
-    width: 100%;
-    max-width: 680px;
-  }
+.input-actions button {
+  flex: 1;
+}
 
-  .input-actions button {
-    flex: 1;
-  }
-
+/* Footer */
 .site-footer {
   width: 100%;
   margin-top: 3rem;
-  border-top: 1px solid #ddd;
-  background: #fafafa;
-  padding: 2rem 0;
+  border-top: 1px solid #e6e6ef;
+  background: #f8f8fc;
+  padding: 2.5rem 0;
 }
 
 .footer-inner {
@@ -333,15 +322,10 @@
   max-width: 760px;
   margin: 0 auto;
   padding: 0 1rem;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
 }
 
 .footer-section h3 {
   margin-bottom: 0.5rem;
-  font-size: 1.1rem;
 }
 
 .footer-note {
@@ -354,12 +338,13 @@
   width: 100%;
   min-height: 100px;
   resize: vertical;
-  padding: 0.75rem;
+  padding: 0.9rem;
   font-size: 1rem;
   font-family: inherit;
   margin-bottom: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  border: 1px solid #dcdceb;
+  border-radius: 12px;
+  background: white;
 }
 
 .footer-button {
@@ -372,11 +357,32 @@
   text-align: center;
 }
 
+/* Mobile */
+@media (max-width: 700px) {
+  .app-shell {
+    margin: 0;
+    border-radius: 0;
+    padding: 1rem;
+  }
+
+  .stats {
+    flex-direction: column;
+  }
+
+  .app-title {
+    font-size: 1.6rem;
+  }
+}
 </style>
 </head>
 <body onload="toggleKb()">
 
-<h1>fingerboard teaches typing</h1>
+<div class="app-shell">
+
+<div class="app-header">
+  <h1 class="app-title">FingerBoard</h1>
+  <div class="app-subtitle">Predictive typing beta</div>
+</div>
 
 <div class="stats">
   <div class="stat">
@@ -422,24 +428,27 @@
       <span class="ghost-typed"   id="ghost-typed"></span><span class="ghost-pipe" id="ghost-pipe"></span><span class="ghost-pending" id="ghost-pending"></span>
     </div>
 
-    <div class="kb-fingers">
-      <button class="kb-finger-btn" id="fb-3" onclick="kbFinger(3)">
-        <div class="finger-row"><span class="fl">q</span><span class="fl">w</span><span class="fl">e</span><span class="fl">r</span></div>
-        <div class="finger-row"><span class="fl">t</span><span class="fl">y</span><span class="fl">u</span></div>
-      </button>
-      <button class="kb-finger-btn" id="fb-2" onclick="kbFinger(2)">
-        <div class="finger-row"><span class="fl">a</span><span class="fl">s</span><span class="fl">d</span><span class="fl">f</span></div>
-        <div class="finger-row"><span class="fl">g</span><span class="fl">z</span><span class="fl">m</span></div>
-      </button>
-      <button class="kb-finger-btn" id="fb-1" onclick="kbFinger(1)">
-        <div class="finger-row"><span class="fl">c</span><span class="fl">v</span><span class="fl">b</span></div>
-        <div class="finger-row"><span class="fl">h</span><span class="fl">i</span><span class="fl">n</span></div>
-      </button>
-      <button class="kb-finger-btn" id="fb-0" onclick="kbFinger(0)">
-        <div class="finger-row"><span class="fl">o</span><span class="fl">p</span><span class="fl">j</span></div>
-        <div class="finger-row"><span class="fl">k</span><span class="fl">l</span><span class="fl">x</span></div>
-      </button>
-    </div>
+<div class="kb-fingers">
+  <button class="kb-finger-btn" id="fb-3" onclick="kbFinger(3)">
+    <div class="finger-row"><span class="fl">q</span><span class="fl">w</span><span class="fl">e</span><span class="fl">r</span></div>
+    <div class="finger-row"><span class="fl">t</span><span class="fl">y</span><span class="fl">u</span></div>
+  </button>
+
+  <button class="kb-finger-btn" id="fb-2" onclick="kbFinger(2)">
+    <div class="finger-row"><span class="fl">a</span><span class="fl">s</span><span class="fl">d</span><span class="fl">f</span></div>
+    <div class="finger-row"><span class="fl">g</span><span class="fl">h</span><span class="fl">j</span></div>
+  </button>
+
+  <button class="kb-finger-btn" id="fb-1" onclick="kbFinger(1)">
+    <div class="finger-row"><span class="fl">z</span><span class="fl">x</span><span class="fl">c</span><span class="fl">v</span></div>
+    <div class="finger-row"><span class="fl">b</span><span class="fl">n</span><span class="fl">m</span></div>
+  </button>
+
+  <button class="kb-finger-btn" id="fb-0" onclick="kbFinger(0)">
+    <div class="finger-row"><span class="fl">i</span><span class="fl">o</span><span class="fl">p</span></div>
+    <div class="finger-row"><span class="fl">k</span><span class="fl">l</span></div>
+  </button>
+</div>
 
     <div class="kb-thumbs">
       <button class="kb-lock-btn" onclick="kbConfrim()">Enter</button>
@@ -909,30 +918,27 @@ function openFeedbackIssue() {
 updateProgress();
 newRound();
 </script>
+
 <footer class="site-footer">
   <div class="footer-inner">
-
     <div class="footer-section">
       <h3>Beta Feedback</h3>
-      <p class="footer-note">
-        FingerBoard is currently in beta.
-      </p>
+      <p class="footer-note">FingerBoard is currently in beta.</p>
 
       <textarea
         id="feedbackBox"
         class="feedback-box"
-        placeholder=" ... "
+        placeholder="All feedback is appreciated!"
       ></textarea>
 
       <button class="footer-button" onclick="openFeedbackIssue()">
-        Send Feedback
+        Open GitHub Issue
       </button>
     </div>
 
     <div class="footer-section footer-meta">
-      <p> </p>
+      <p>FingerBoard Beta Preview</p>
     </div>
-
   </div>
 </footer>
 </body>
