@@ -387,41 +387,41 @@
    TRAINER LOGIC
    ========================================================= */
 const TUTORIAL = [
-  "fingerboard is a one handed typing device",
-  "it uses only four finger keys to type every letter",
-  "each finger controls a distinct group of letters",
-  "the index finger types q w e r t y u",
-  "the middle finger types a s d f g z m",
-  "the ring finger types h i b n c v",
-  "the pinky finger types o p j k l x",
-  "press each finger in the order the letters appear",
-  "the device predicts your whole word as you press",
-  "press confirm when the correct word appears",
-  "press next to cycle through alternative words",
-  "open the on screen fingerboard below and try it now",
+  "hi",
+  "welcome to fingerboard",
+  "fingerboard lets you type full words with one hand",
+  "you do not need to type every letter", 
+  "the system will predict for you",
+  "after a few presses the most likely word will appear",
+  "press confirm when the word on screen is correct",
+  "press next to choose a different matching word",
+  "common words become familiar very quickly with practice",
+  "soon you will enter longer words with fewer movements",
+  "fingerboard is designed for fast efficient and comfortable typing",
+  "now begin practicing and let your fingers learn the patterns"
 ];
 
 const PRACTICE = [
-  "the concept of predictive text reduces friction",
-  "input methods should feel natural and efficient",
-  "each finger controls a distinct group of letters",
-  "the algorithm predicts words from finger sequences",
-  "typing with four fingers covers the whole alphabet",
-  "the signature of each word guides the prediction",
-  "fewer keystrokes produce complete words instantly",
-  "the brain adapts quickly to new input patterns",
-  "practice builds the muscle memory for each finger",
-  "word frequency shapes which suggestion comes first",
-  "the device outputs text without a visible screen",
-  "every letter belongs to exactly one finger group",
-  "the prediction updates with each additional press",
-  "confirm the current word to advance the sentence",
-  "cycle through alternatives when the first is wrong",
-  "compact hardware can support rich text input",
-  "the index finger handles the most frequent letters",
-  "efficient typing requires learning the letter groups",
-  "the fingerboard concept prioritises speed and comfort",
-  "text prediction depends on the underlying dictionary",
+  "the quick brown fox jumps over the lazy dog near the river bank",
+  "typing every day helps improve both speed and accuracy over time",
+  "a calm morning breeze carried leaves across the empty parking lot",
+  "she packed her notebook, headphones, and charger before leaving home",
+  "bright stars filled the sky as the city lights faded in the distance",
+  "learning to type without looking at the keyboard takes steady practice",
+  "the small coffee shop on the corner serves fresh bread every morning",
+  "they finished reading the article just before the meeting began online",
+  "rain tapped softly against the window during the quiet afternoon class",
+  "simple habits repeated daily often lead to remarkable long term progress",
+  "the bicycle leaned against the fence beside a row of blooming flowers",
+  "several students stayed late to complete their science project together",
+  "clear instructions make complex tasks easier to understand and complete",
+  "the train arrived exactly on time despite the heavy snow last night",
+  "fresh oranges and apples were arranged neatly in wooden market baskets",
+  "a well designed typing test should balance challenge with readability",
+  "the old library clock chimed twice as visitors entered through the hall",
+  "music played softly in the background while the programmer wrote code",
+  "each practice round should encourage focus rather than rushed mistakes",
+  "winter sunlight reflected brightly off the frozen lake behind the school"
 ];
 
 let mode            = "tutorial";  // "tutorial" | "practice"
@@ -657,7 +657,9 @@ fetch("dictionary.txt")
     const words = text.split("\n").map(l => l.trim().toLowerCase()).filter(Boolean);
     buildMaps(words);
   })
-  .catch(() => { /* silently use builtin */ });
+  .catch(err => {
+  console.error("Dictionary load failed:", err);
+});
 
 /* ---- Engine state ---- */
 let kbSig         = "";
