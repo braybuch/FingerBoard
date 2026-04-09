@@ -3,6 +3,9 @@ the
 hi
 to
 do
+if
+is
+on
 and
 welcome
 fingerboard
@@ -18,12 +21,11 @@ become
 choose
 common
 comfortable
-confirm
+enter
 now
 correct
 different
 efficient
-enter
 every
 fast
 familiar
@@ -32,7 +34,6 @@ fewer
 for
 full
 hand
-is
 let
 lets
 learn
@@ -48,7 +49,6 @@ movements
 need
 next
 of
-on
 one
 patterns
 practice
@@ -188,6 +188,7 @@ reading
 reflected
 remarkable
 repeated
+confirm
 river
 round
 row
@@ -333,7 +334,6 @@ there
 use
 an
 how
-if
 up
 other
 about
