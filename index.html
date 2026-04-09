@@ -384,10 +384,6 @@ button:active {
   display: none !important;
 }
 
-body.focus-mode .app-shell {
-  max-width: 100%;
-}
-
 body.focus-mode .prompt-box {
   margin-top: 1rem;
 }
@@ -531,7 +527,7 @@ body.focus-mode .kb-panel {
   <div class="kb-layout">
 
     <div class="kb-ghost" id="kb-ghost">
-      <span class="kb-ghost-placeholder" id="ghost-placeholder">press a finger key...</span>
+      <span class="kb-ghost-placeholder" id="ghost-placeholder">...</span>
       <span class="ghost-typed"   id="ghost-typed"></span><span class="ghost-pipe" id="ghost-pipe"></span><span class="ghost-pending" id="ghost-pending"></span>
     </div>
 
@@ -1130,7 +1126,7 @@ function toggleFocusMode() {
     feedback.style.display = "";
   }
 
-  btn.textContent = focusMode ? "Exit Focus" : "Focus Mode";
+  btn.textContent = focusMode ? "See more" : "See less";
 }
 
 function flashPromptSuccess() {
@@ -1212,4 +1208,7 @@ newRound();
   </div>
 </footer>
 </body>
+<script>
+toggleFocusMode();
+</script>
 </html>
