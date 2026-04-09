@@ -373,6 +373,40 @@ button:active { transform: translateY(1px); }
     font-size: 1.6rem;
   }
 }
+.focus-hidden {
+  display: none !important;
+}
+
+body.focus-mode .app-shell {
+  max-width: 100%;
+  padding-top: 2rem;
+}
+
+body.focus-mode .prompt-box {
+  margin-top: 2rem;
+}
+
+body.focus-mode .kb-panel {
+  margin-top: 1.5rem;
+}
+
+.prompt-success {
+  animation: promptSuccessFlash 500ms ease;
+}
+
+@keyframes promptSuccessFlash {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.015); }
+  50%  { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+
+.prompt-success-glow {
+  box-shadow:
+    0 0 0 2px rgba(46,125,50,0.15),
+    0 0 18px rgba(46,125,50,0.18);
+  border-color: #2e7d32 !important;
+}
 </style>
 </head>
 <body onload="toggleKb()">
@@ -428,27 +462,27 @@ button:active { transform: translateY(1px); }
       <span class="ghost-typed"   id="ghost-typed"></span><span class="ghost-pipe" id="ghost-pipe"></span><span class="ghost-pending" id="ghost-pending"></span>
     </div>
 
-<div class="kb-fingers">
-  <button class="kb-finger-btn" id="fb-3" onclick="kbFinger(3)">
-    <div class="finger-row"><span class="fl">q</span><span class="fl">w</span><span class="fl">e</span><span class="fl">r</span></div>
-    <div class="finger-row"><span class="fl">t</span><span class="fl">y</span><span class="fl">u</span></div>
-  </button>
+  <div class="kb-fingers">
+    <button class="kb-finger-btn" id="fb-3" onclick="kbFinger(3)">
+      <div class="finger-row"><span class="fl">q</span><span class="fl">w</span><span class="fl">e</span><span class="fl">r</span></div>
+      <div class="finger-row"><span class="fl">t</span><span class="fl">y</span><span class="fl">u</span></div>
+    </button>
 
-  <button class="kb-finger-btn" id="fb-2" onclick="kbFinger(2)">
-    <div class="finger-row"><span class="fl">a</span><span class="fl">s</span><span class="fl">d</span><span class="fl">f</span></div>
-    <div class="finger-row"><span class="fl">g</span><span class="fl">h</span><span class="fl">j</span></div>
-  </button>
+    <button class="kb-finger-btn" id="fb-2" onclick="kbFinger(2)">
+      <div class="finger-row"><span class="fl">a</span><span class="fl">s</span><span class="fl">d</span><span class="fl">f</span></div>
+      <div class="finger-row"><span class="fl">g</span><span class="fl">h</span><span class="fl">j</span></div>
+    </button>
 
-  <button class="kb-finger-btn" id="fb-1" onclick="kbFinger(1)">
-    <div class="finger-row"><span class="fl">z</span><span class="fl">x</span><span class="fl">c</span><span class="fl">v</span></div>
-    <div class="finger-row"><span class="fl">b</span><span class="fl">n</span><span class="fl">m</span></div>
-  </button>
+    <button class="kb-finger-btn" id="fb-1" onclick="kbFinger(1)">
+      <div class="finger-row"><span class="fl">z</span><span class="fl">x</span><span class="fl">c</span><span class="fl">v</span></div>
+      <div class="finger-row"><span class="fl">b</span><span class="fl">n</span><span class="fl">m</span></div>
+    </button>
 
-  <button class="kb-finger-btn" id="fb-0" onclick="kbFinger(0)">
-    <div class="finger-row"><span class="fl">i</span><span class="fl">o</span><span class="fl">p</span></div>
-    <div class="finger-row"><span class="fl">k</span><span class="fl">l</span></div>
-  </button>
-</div>
+    <button class="kb-finger-btn" id="fb-0" onclick="kbFinger(0)">
+      <div class="finger-row"><span class="fl">i</span><span class="fl">o</span><span class="fl">p</span></div>
+      <div class="finger-row"><span class="fl">k</span><span class="fl">l</span></div>
+    </button>
+  </div>
 
     <div class="kb-thumbs">
       <button class="kb-lock-btn" onclick="kbConfrim()">Enter</button>
@@ -462,6 +496,10 @@ button:active { transform: translateY(1px); }
 <div class="input-actions" id="dev-buttons">
   <button onclick="skipTutorial()">Skip</button>
   <button onclick="toggleInputMode()">Hide Keyboard</button>
+</div>
+
+<div class="input-actions" id="user-buttons">
+  <button onclick="toggleFocusMode()" id="focus-btn">Focus Mode</button>
 </div>
 
 <script>
@@ -592,7 +630,10 @@ function submitAttempt() {
     streak++;
     wordIndex++;
 
+    renderPrompt();
+
     if (wordIndex >= currentWords.length) {
+      flashPromptSuccess();
       const elapsed = (Date.now() - startTime) / 1000 / 60;
       const wpm = Math.round(currentWords.length / elapsed);
       const acc = Math.round((correctAttempts / totalAttempts) * 100);
@@ -646,10 +687,17 @@ document.getElementById("typed-input").addEventListener("keydown", e => {
    FINGERBOARD ENGINE
    ========================================================= */
 const CHAR_TO_KEY = {
-  q:3,w:3,e:3,r:3,t:3,y:3,u:3,
-  a:2,s:2,d:2,f:2,g:2,z:2,m:2,
-  h:1,i:1,b:1,n:1,c:1,v:1,
-  o:0,p:0,j:0,k:0,l:0,x:0
+  // Group 3
+  q:3, w:3, e:3, r:3, t:3, y:3, u:3,
+
+  // Group 2
+  a:2, s:2, d:2, f:2, g:2, h:2, j:2,
+
+  // Group 1
+  z:1, x:1, c:1, v:1, b:1, n:1, m:1,
+
+  // Group 0
+  i:0, o:0, p:0, k:0, l:0
 };
 
 function getSignature(word) {
@@ -859,6 +907,7 @@ function flashFinger(index) {
 
 function toggleKb() {
   document.getElementById("kb-panel").classList.toggle("open");
+  document.querySelector(".input-row").style.display = "none";
 }
 
 function skipTutorial() {
@@ -913,6 +962,61 @@ function openFeedbackIssue() {
     encodeURIComponent(msg);
 
   window.open(url, "_blank");
+}
+
+let focusMode = false;
+
+function toggleFocusMode() {
+  focusMode = !focusMode;
+
+  const body = document.body;
+  const btn = document.getElementById("focus-btn");
+  const feedback = document.getElementById("feedback");
+
+  body.classList.toggle("focus-mode", focusMode);
+
+  const hideSelectors = [
+    ".app-header",
+    ".stats",
+    ".mode-label",
+    ".progress-wrap",
+    ".feedback",
+    ".input-row",
+    "#dev-buttons",
+    ".site-footer"
+  ];
+
+  hideSelectors.forEach(selector => {
+    document.querySelectorAll(selector).forEach(el => {
+      if (el !== btn.parentElement) {
+        el.classList.toggle("focus-hidden", focusMode);
+      }
+    });
+  });
+
+  // Explicitly suppress feedback in focus mode
+  if (focusMode) {
+    feedback.style.display = "none";
+    feedback.textContent = "";
+  } else {
+    feedback.style.display = "";
+  }
+
+  btn.textContent = focusMode ? "Exit Focus" : "Focus Mode";
+}
+
+function flashPromptSuccess() {
+  const box = document.getElementById("prompt-box");
+
+  box.classList.remove("prompt-success", "prompt-success-glow");
+
+  void box.offsetWidth; // restart animation
+
+  box.classList.add("prompt-success", "prompt-success-glow");
+
+  setTimeout(() => {
+    box.classList.remove("prompt-success", "prompt-success-glow");
+  }, 500);
 }
 
 updateProgress();
