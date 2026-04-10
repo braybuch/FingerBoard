@@ -550,7 +550,7 @@ input,
   border-radius: 24px;
   box-shadow: 0 24px 60px rgba(0,0,0,0.18);
   padding: 2rem 1.75rem 1.5rem;
-  max-width: 480px;
+  max-width: 560px;
   width: 100%;
   margin: auto;
 }
@@ -568,35 +568,105 @@ input,
   margin-bottom: 1.25rem;
 }
 
+/* Slide container */
+.modal-slides {
+  overflow: hidden;
+  position: relative;
+}
+
+.modal-slide {
+  display: none;
+}
+
+.modal-slide.active {
+  display: block;
+}
+
 .modal-body {
   font-size: 0.95rem;
   line-height: 1.6;
   color: var(--text);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .modal-body p + p {
   margin-top: 0.75rem;
 }
 
-.modal-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-bottom: 1.5rem;
+/* Morph canvas */
+.modal-morph-wrap {
+  width: 100%;
+  background: #f7f7fc;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  position: relative;
 }
 
-.modal-pill {
-  background: var(--accent-soft);
-  color: var(--accent);
-  border-radius: 999px;
-  padding: 0.3rem 0.75rem;
+.modal-morph-wrap canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.morph-caption {
   font-size: 0.78rem;
-  font-weight: 600;
+  color: var(--soft-muted);
+  text-align: center;
+  padding: 0.5rem;
 }
 
+/* Dot indicators */
+.modal-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-bottom: 1.25rem;
+}
+
+.modal-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--line-strong);
+  transition: background 0.2s, width 0.2s;
+}
+
+.modal-dot.active {
+  background: var(--accent);
+  width: 18px;
+}
+
+/* Buttons */
 .modal-ok-btn {
   width: 100%;
+  background: var(--accent);
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 16px;
+  padding: 0.9rem;
+}
+
+.modal-nav-row {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 0;
+}
+
+.modal-nav-back {
+  flex: 0 0 auto;
+  background: #f3f3f8;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 16px;
+  padding: 0.9rem 1.25rem;
+}
+
+.modal-nav-next {
+  flex: 1;
   background: var(--accent);
   color: white;
   font-weight: 700;
@@ -632,16 +702,52 @@ input,
 <div class="modal-backdrop" id="welcome-modal">
   <div class="modal-card">
     <div class="modal-logo">FingerBoard</div>
-    <div class="modal-tagline">Handheld Preditive Text Beta Preview</div>
-    <div class="modal-body">
-      <p>FingerBoard is a predictive text keyboard. Instead of typing every letter, you press the button the letter belongs to.</p>
-      <p>This web app is the tutorial. It teaches you the basics and helps build muscle memory.</p>
-      <p>Initially, the button you should press will be highlighted in green. But once you finish the tutorial, you're on your own!</p>
-      <p>Work through the tutorial, then practice at your own pace. Your stats are tracked as you improve.</p>
-      <p><small>WPM = words-per-minute, KPC = keystrokes-per-character</small></p>
+    <div class="modal-tagline">Handheld Predictive Text Beta Preview</div>
+    <div class="modal-slides">
+      <!-- Slide 1: What is it -->
+      <div class="modal-slide active" id="mslide-0">
+        <div class="modal-body">
+          <p>FingerBoard is a predictive text keyboard. Instead of typing the letter you press the button the letter belongs to.</p>
+          <p>This web app is the tutorial. It teaches you the basics and helps build muscle memory.</p>
+          <p>Work through the tutorial, then practice at your own pace. Your stats are tracked as you improve.</p>
+        </div>
+        <div class="modal-nav-row">
+          <button class="modal-nav-next" onclick="modalGoTo(1)">Next</button>
+        </div>
+        <button class="modal-skip-link" onclick="dismissWelcomeModal(); skipTutorial()">I know what I'm doing (skip tutorial)</button>
+      </div>
+
+      <!-- Slide 2: Layout morph -->
+      <div class="modal-slide" id="mslide-1">
+        <div class="modal-body">
+          <p>The full QWERTY keyboard was split into <strong>4 groups</strong></p>
+        </div>
+        <div class="modal-morph-wrap">
+          <canvas id="morph-canvas" width="520" height="200"></canvas>
+          <div class="morph-caption" id="morph-caption"></div>
+        </div>
+        <div class="modal-nav-row">
+          <button class="modal-nav-back" onclick="modalGoTo(0)">←</button>
+          <button class="modal-nav-next" onclick="modalGoTo(2)">Next</button>
+        </div>
+        <button class="modal-skip-link" onclick="dismissWelcomeModal(); skipTutorial()">I know what I'm doing (skip tutorial)</button>
+      </div>
+
+      <!-- Slide 3: How it works -->
+      <div class="modal-slide" id="mslide-2">
+        <div class="modal-body">
+          <p>As you press buttons, the system finds <i>all words</i> that match that sequence.</p>
+          <p>After a few presses, usually just one word fits. Press <strong>Next</strong> to page through matches if the suggestion isn't right.</p>
+          <p>During the tutorial the button you should press will be <strong>highlighted in green.</strong> But once you finish the tutorial, you're on your own!</p>
+        </div>
+        <div class="modal-nav-row">
+          <button class="modal-nav-back" onclick="modalGoTo(1)">←</button>
+          <button class="modal-nav-next" onclick="dismissWelcomeModal()">Let's go!</button>
+        </div>
+        <button class="modal-skip-link" onclick="dismissWelcomeModal(); skipTutorial()">I know what I'm doing (skip tutorial)</button>
+      </div>
+
     </div>
-    <button class="modal-ok-btn" onclick="dismissWelcomeModal()">Let's go!</button>
-    <button class="modal-skip-link" onclick="dismissWelcomeModal(); skipTutorial()">I know what I'm doing (skip tutorial)</button>
   </div>
 </div>
 
@@ -1248,10 +1354,246 @@ function toggleKb() {
 
 function showWelcomeModal() {
   document.getElementById("welcome-modal").classList.remove("hidden");
+  // Reset to slide 0 each time modal opens
+  modalGoTo(0);
 }
 
 function dismissWelcomeModal() {
   document.getElementById("welcome-modal").classList.add("hidden");
+  morphStop();
+}
+
+/* ── Modal carousel ── */
+let currentModalSlide = 0;
+const MODAL_SLIDE_COUNT = 2;
+
+function modalGoTo(n) {
+  // Hide old slide
+  const oldSlide = document.getElementById("mslide-" + currentModalSlide);
+  if (oldSlide) oldSlide.classList.remove("active");
+  const oldDot = document.getElementById("mdot-" + currentModalSlide);
+  if (oldDot) oldDot.classList.remove("active");
+
+  currentModalSlide = n;
+
+  // Show new slide
+  const newSlide = document.getElementById("mslide-" + n);
+  if (newSlide) newSlide.classList.add("active");
+  const newDot = document.getElementById("mdot-" + n);
+  if (newDot) newDot.classList.add("active");
+
+  // Kick off morph when landing on slide 2
+  if (n === 1) {
+    setTimeout(morphInit, 120);
+  } else {
+    morphStop();
+  }
+}
+
+/* ============================================================
+   QWERTY → FINGERBOARD MORPH  (ported from FingerboardMorph.java)
+   ============================================================ */
+const GROUP_COLORS = ["#7c6fcd","#5c9e6e","#c06060","#c09030"];
+const GROUP_DELAY  = 0.18;
+
+let morphKeys      = [];
+let morphProgress  = 0;
+let morphForward   = true;
+let morphRaf       = null;
+let morphReady     = false;
+let morphLastTs    = null;
+let morphAutoTimer = null;
+
+function morphEase(t) {
+  return t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t;
+}
+
+function morphBuildKeys(W, H) {
+  morphKeys = [];
+  const keyW = 28, gap = 4;
+  const row1 = ["q","w","e","r","t","y","u","i","o","p"];
+  const row2 = ["a","s","d","f","g","h","j","k","l"];
+  const row3 = ["z","x","c","v","b","n","m"];
+
+  const totalW = row1.length * keyW + (row1.length-1)*gap;
+  const sx = (W - totalW) / 2;
+  const sy = H * 0.12;
+
+  // group assignment mirrors Java
+  const groupOf = {
+    q:0,w:0,e:0,r:0,t:0,y:0,u:0,
+    a:1,s:1,d:1,f:1,g:1,h:1,j:1,
+    z:2,x:2,c:2,v:2,b:2,n:2,m:2,
+    i:3,o:3,p:3,k:3,l:3
+  };
+
+  const addRow = (letters, offX, offY) => {
+    letters.forEach((ch, i) => {
+      morphKeys.push({
+        text: ch,
+        x: sx + offX + i*(keyW+gap),
+        y: sy + offY,
+        startX: sx + offX + i*(keyW+gap),
+        startY: sy + offY,
+        targetX: 0, targetY: 0,
+        group: groupOf[ch] ?? 0
+      });
+    });
+  };
+
+  addRow(row1, 0,    0);
+  addRow(row2, 14,   38);
+  addRow(row3, 38,   76);
+
+  // Fingerboard target positions
+  const gs = W / 4.6;
+  const bx = W * 0.09;
+  const by = H * 0.56;
+  const cg = 22, rg = 20;
+
+  const targets = {
+    q:[bx,       by],    w:[bx+cg,   by],    e:[bx+cg*2, by],    r:[bx+cg*3, by],
+    t:[bx+10,    by+rg], y:[bx+cg+10,by+rg], u:[bx+cg*2+10,by+rg],
+    a:[bx+gs,    by],    s:[bx+gs+cg,by],    d:[bx+gs+cg*2,by],  f:[bx+gs+cg*3,by],
+    g:[bx+gs+10, by+rg], h:[bx+gs+cg+10,by+rg], j:[bx+gs+cg*2+10,by+rg],
+    z:[bx+gs*2,  by],    x:[bx+gs*2+cg,by],  c:[bx+gs*2+cg*2,by],v:[bx+gs*2+cg*3,by],
+    b:[bx+gs*2+10,by+rg],n:[bx+gs*2+cg+10,by+rg],m:[bx+gs*2+cg*2+10,by+rg],
+    i:[bx+gs*3,  by],    o:[bx+gs*3+cg,by],  p:[bx+gs*3+cg*2,by],
+    k:[bx+gs*3+10,by+rg],l:[bx+gs*3+cg+10,by+rg]
+  };
+
+  morphKeys.forEach(k => {
+    const t = targets[k.text];
+    if (t) { k.targetX = t[0]; k.targetY = t[1]; }
+  });
+}
+
+function morphInit() {
+  const canvas = document.getElementById("morph-canvas");
+  if (!canvas) return;
+
+  // Size canvas to its CSS width
+  const W = canvas.offsetWidth || 520;
+  const PR = window.devicePixelRatio || 1;
+  canvas.width  = W * PR;
+  canvas.height = 200 * PR;
+  canvas.getContext("2d").scale(PR, PR);
+  const CW = W, CH = 200;
+
+  morphBuildKeys(CW, CH);
+  morphProgress = 0;
+  morphForward  = true;
+  morphReady    = true;
+  morphLastTs   = null;
+
+  morphDraw(CW, CH);
+
+  // Auto-play once after a short pause, then loop
+  clearTimeout(morphAutoTimer);
+  morphAutoTimer = setTimeout(() => morphAnimate(CW, CH), 600);
+
+  canvas.onclick = () => {
+    morphStop();
+    if (!morphForward) {
+      // swap directions
+      morphKeys.forEach(k => {
+        [k.startX, k.startY, k.targetX, k.targetY] =
+          [k.targetX, k.targetY, k.startX, k.startY];
+      });
+      morphForward = true;
+    }
+    morphProgress = 0;
+    morphAnimate(CW, CH);
+  };
+}
+
+function morphAnimate(W, H) {
+  if (morphRaf) cancelAnimationFrame(morphRaf);
+  const maxP = 1 + GROUP_DELAY * 3;
+
+  const step = (ts) => {
+    if (!morphLastTs) morphLastTs = ts;
+    const dt = (ts - morphLastTs) / 1000;
+    morphLastTs = ts;
+
+    morphProgress += dt * 0.65;   // speed — adjust freely
+
+    if (morphProgress >= maxP) {
+      morphProgress = maxP;
+      morphDraw(W, H);
+      updateMorphCaption(true);
+      // Pause then reverse
+      morphAutoTimer = setTimeout(() => {
+        morphKeys.forEach(k => {
+          [k.startX, k.startY, k.targetX, k.targetY] =
+            [k.targetX, k.targetY, k.startX, k.startY];
+        });
+        morphForward = !morphForward;
+        morphProgress = 0;
+        morphLastTs = null;
+        morphAnimate(W, H);
+      }, 1800);
+      return;
+    }
+
+    morphDraw(W, H);
+    updateMorphCaption(false);
+    morphRaf = requestAnimationFrame(step);
+  };
+
+  morphRaf = requestAnimationFrame(step);
+}
+
+function morphDraw(W, H) {
+  const canvas = document.getElementById("morph-canvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, W, H);
+
+  const kw = 24, kh = 24, r = 6;
+  const maxP = 1 + GROUP_DELAY * 3;
+  const overallT = Math.min(1, morphProgress / maxP);
+
+
+  morphKeys.forEach(k => {
+    const localT = morphEase(Math.max(0, Math.min(1,
+      morphProgress - k.group * GROUP_DELAY)));
+    const x = k.startX + (k.targetX - k.startX) * localT;
+    const y = k.startY + (k.targetY - k.startY) * localT;
+
+    // Key background
+    ctx.fillStyle = "#ffffff";
+    ctx.strokeStyle = GROUP_COLORS[k.group] + "88";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(x, y, kw, kh, r);
+    ctx.fill();
+    ctx.stroke();
+
+    // Letter
+    ctx.fillStyle = GROUP_COLORS[k.group];
+    ctx.font = "bold 11px system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(k.text, x + kw/2, y + kh/2);
+  });
+}
+
+function updateMorphCaption(done) {
+  const el = document.getElementById("morph-caption");
+  if (!el) return;
+  const maxP = 1 + GROUP_DELAY * 3;
+  const t = morphProgress / maxP;
+  if (done && morphForward)       el.textContent = "";
+  else if (done && !morphForward) el.textContent = "";
+  else if (t < 0.15)              el.textContent = "";
+  else                            el.textContent = "";
+}
+
+function morphStop() {
+  if (morphRaf) { cancelAnimationFrame(morphRaf); morphRaf = null; }
+  clearTimeout(morphAutoTimer);
+  morphLastTs = null;
 }
 
 function skipTutorial() {
