@@ -512,7 +512,7 @@ function pulseDemoElement(el) {
 
   demoPulseTimeout = setTimeout(() => {
     el.classList.remove("active");
-  }, 160);
+  }, 200);  // ← Increased from 160ms to 200ms for better visibility
 }
 
 function renderDemoStep(step) {

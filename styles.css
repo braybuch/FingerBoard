@@ -744,3 +744,23 @@ input,
     0 0 12px rgba(46,125,50,0.18);
   animation: tutorialPulse 1s ease-in-out infinite;
 }
+
+/* Add this new section after the existing demo keyboard styles */
+
+.kb-finger-btn.active,
+#demo-k0.active,
+#demo-k1.active,
+#demo-k2.active,
+#demo-k3.active,
+#demo-enterBtn.active {
+  background: #565663;
+  color: white;
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.2),
+    0 2px 6px rgba(0,0,0,0.15);
+  transform: translateY(2px);
+}
+
+#demo-enterBtn.active {
+  background: #2d5a2d;
+}
