@@ -527,9 +527,121 @@ input,
   touch-action: manipulation;
 }
 
+/* Welcome modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 20, 40, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-backdrop.hidden {
+  display: none;
+}
+
+.modal-card {
+  background: var(--card);
+  border-radius: 24px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+  padding: 2rem 1.75rem 1.5rem;
+  max-width: 480px;
+  width: 100%;
+}
+
+.modal-logo {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 0.2rem;
+}
+
+.modal-tagline {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 1.25rem;
+}
+
+.modal-body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text);
+  margin-bottom: 1.5rem;
+}
+
+.modal-body p + p {
+  margin-top: 0.75rem;
+}
+
+.modal-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-pill {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.modal-ok-btn {
+  width: 100%;
+  background: var(--accent);
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 16px;
+  padding: 0.9rem;
+}
+
+.modal-skip-link {
+  display: block;
+  text-align: center;
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--soft-muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  width: 100%;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.modal-skip-link:hover {
+  color: var(--muted);
+}
+
 </style>
 </head>
-<body onload="toggleKb()">
+<body onload="toggleKb(); showWelcomeModal();">
+
+<!-- Welcome modal -->
+<div class="modal-backdrop" id="welcome-modal">
+  <div class="modal-card">
+    <div class="modal-logo">FingerBoard</div>
+    <div class="modal-tagline">Handheld Predictive Keyboard Beta Preview</div>
+    <div class="modal-body">
+      <p>FingerBoard is an 8-button predictive text keyboard. Instead of typing every letter, you press the button the letter belongs to.</p>
+      <p>This web app is the tutorial. It teaches you the basics and builds muscle memory.</p>
+      <p>Initially, the button you should press will be highlighted. Once you finish the tutorial, you're on your own!</p>
+      <p>Work through the tutorial, then practice at your own pace. Your stats are tracked as you improve.</p>
+      <p><small>WPM = words-per-minute, KPM = keystrokes-per-character</small></p>
+    </div>
+    <button class="modal-ok-btn" onclick="dismissWelcomeModal()">Let's go!</button>
+    <button class="modal-skip-link" onclick="dismissWelcomeModal(); skipTutorial()">I know what I'm doing (skip tutorial)</button>
+  </div>
+</div>
 
 <div class="app-shell">
 
@@ -1130,6 +1242,14 @@ function flashFinger(index) {
 
 function toggleKb() {
   document.getElementById("kb-panel").classList.toggle("open");
+}
+
+function showWelcomeModal() {
+  document.getElementById("welcome-modal").classList.remove("hidden");
+}
+
+function dismissWelcomeModal() {
+  document.getElementById("welcome-modal").classList.add("hidden");
 }
 
 function skipTutorial() {
