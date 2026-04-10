@@ -301,7 +301,7 @@ button:active {
 /* Thumb row */
 .kb-thumbs {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 0.75rem;
 }
 
@@ -317,6 +317,45 @@ button:active {
   color: var(--text);
   font-weight: 600;
   font-size: 1.05rem;
+}
+
+.kb-back-btn {
+  background: #f3f3f8;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+/* Backspace button inside ghost row */
+.kb-ghost-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: stretch;
+}
+
+.kb-ghost {
+  flex: 1;
+}
+
+.kb-bksp-btn {
+  flex-shrink: 0;
+  min-width: 56px;
+  background: #f3f3f8;
+  color: var(--text);
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.08s ease, opacity 0.15s ease;
+}
+
+.kb-bksp-btn:active {
+  transform: translateY(1px);
+  opacity: 0.85;
 }
 
 /* Bottom actions */
@@ -464,7 +503,9 @@ body.focus-mode .kb-panel {
 /* First-word guided highlight */
 .kb-finger-btn.tutorial-glow,
 .kb-lock-btn.tutorial-glow,
-.kb-page-btn.tutorial-glow {
+.kb-page-btn.tutorial-glow,
+.kb-back-btn.tutorial-glow,
+.kb-bksp-btn.tutorial-glow {
   border: 2px solid #2e7d32;
   box-shadow:
     0 0 0 3px rgba(46,125,50,0.12),
@@ -536,9 +577,12 @@ input,
 <div class="kb-panel" id="kb-panel">
   <div class="kb-layout">
 
-    <div class="kb-ghost" id="kb-ghost">
-      <span class="kb-ghost-placeholder" id="ghost-placeholder">...</span>
-      <span class="ghost-typed"   id="ghost-typed"></span><span class="ghost-pipe" id="ghost-pipe"></span><span class="ghost-pending" id="ghost-pending"></span>
+    <div class="kb-ghost-row">
+      <div class="kb-ghost" id="kb-ghost">
+        <span class="kb-ghost-placeholder" id="ghost-placeholder">...</span>
+        <span class="ghost-typed"   id="ghost-typed"></span><span class="ghost-pipe" id="ghost-pipe"></span><span class="ghost-pending" id="ghost-pending"></span>
+      </div>
+      <button class="kb-bksp-btn" onclick="kbBackspace()" title="Delete last finger press">⌫</button>
     </div>
 
   <div class="kb-fingers">
@@ -564,8 +608,9 @@ input,
   </div>
 
     <div class="kb-thumbs">
+      <button class="kb-back-btn" onclick="kbPrev()">← Prev</button>
       <button class="kb-lock-btn" onclick="kbConfrim()">Enter</button>
-      <button class="kb-page-btn" onclick="kbNext()">Next</button>
+      <button class="kb-page-btn" onclick="kbNext()">Next →</button>
     </div>
 
   </div>
@@ -977,6 +1022,35 @@ function kbNext() {
   updateTutorialHint();
 }
 
+/* kbPrev() — reverse of kbNext(). Steps one suggestion backwards.
+   Only meaningful while Browsing (kbBrowseIndex >= 0).
+   If already at the start of the list, does nothing. */
+function kbPrev() {
+  totalKeystrokes++;
+  if (!kbSig) return;
+
+  // Can't go back if we're still in Predicting mode or at the very start.
+  if (kbBrowseIndex <= 0) return;
+
+  // Step the index back by one (skip duplicates going backwards).
+  kbBrowseIndex--;
+  if (
+    kbBrowseIndex > 0 &&
+    kbExactMatches[kbBrowseIndex] === kbSuggestions[0]
+  ) {
+    kbBrowseIndex--;
+  }
+
+  // Slot 2 becomes what was Slot 1; Slot 1 is the entry before it.
+  kbSuggestions[1] = kbSuggestions[0];
+  kbSuggestions[0] = (kbBrowseIndex >= 0 && kbExactMatches[kbBrowseIndex])
+    ? kbExactMatches[kbBrowseIndex]
+    : "";
+
+  kbRenderGhost();
+  updateTutorialHint();
+}
+
 /* Confirm (Lock) — commit Slot 1 to the text input and submit. */
 function kbConfrim() {
   totalKeystrokes++;
@@ -993,6 +1067,21 @@ function kbReset() {
   kbBrowseIndex  = -1;
   kbSuggestions  = ["", ""];
   kbExactMatches = [];
+  kbRenderGhost();
+}
+
+/* kbBackspace() — remove the last finger press from kbSig and re-predict.
+   Snaps back to Predicting mode, same as pressing a finger button. */
+function kbBackspace() {
+  if (!kbSig) return;
+  totalKeystrokes++;
+  kbSig = kbSig.slice(0, -1);
+
+  // Snap back to Predicting
+  kbBrowseIndex  = -1;
+  kbExactMatches = [];
+
+  kbUpdatePredicting();
   kbRenderGhost();
 }
 
@@ -1176,6 +1265,24 @@ function updateTutorialHint() {
     return;
   }
 
+  // If the sig typed so far is already wrong (a pressed finger doesn't match
+  // the expected signature at that position), guide the user to backspace.
+  for (let i = 0; i < kbSig.length && i < expectedSig.length; i++) {
+    if (kbSig[i] !== expectedSig[i]) {
+      const bkspBtn = document.querySelector(".kb-bksp-btn");
+      if (bkspBtn) bkspBtn.classList.add("tutorial-glow");
+      return;
+    }
+  }
+
+  // Sig is longer than expected — too many presses, backspace needed.
+  if (kbSig.length > expectedSig.length) {
+    const bkspBtn = document.querySelector(".kb-bksp-btn");
+    if (bkspBtn) bkspBtn.classList.add("tutorial-glow");
+    return;
+  }
+
+  // Sig is a correct prefix but not complete yet — show next finger.
   if (kbSig.length < expectedSig.length) {
     const nextChar = expected[kbSig.length]?.toLowerCase();
     const finger = CHAR_TO_KEY[nextChar];
@@ -1186,6 +1293,26 @@ function updateTutorialHint() {
     return;
   }
 
+  // Sig length matches expected but suggestion isn't right yet.
+  // If we're browsing and the expected word is already in the match list,
+  // check whether the user has paged past it and point them the right way.
+  if (kbBrowseIndex >= 0 && kbExactMatches.length > 0) {
+    const expectedIdx = kbExactMatches.indexOf(expected);
+    if (expectedIdx !== -1) {
+      if (expectedIdx < kbBrowseIndex) {
+        // Expected word is behind current position — guide Prev.
+        const prevBtn = document.querySelector(".kb-back-btn");
+        if (prevBtn) prevBtn.classList.add("tutorial-glow");
+      } else {
+        // Expected word is ahead — guide Next.
+        const nextBtn = document.querySelector(".kb-page-btn");
+        if (nextBtn) nextBtn.classList.add("tutorial-glow");
+      }
+      return;
+    }
+  }
+
+  // Default: sig matches length, just keep paging forward.
   const nextBtn = document.querySelector(".kb-page-btn");
   if (nextBtn) nextBtn.classList.add("tutorial-glow");
 }
