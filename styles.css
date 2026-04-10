@@ -298,8 +298,8 @@ button:active {
 }
 
 .kb-lock-btn {
-  background: var(--accent);
-  color: white;
+  background: #f3f3f8;
+  color: var(--text);
   font-weight: 700;
   font-size: 1.05rem;
   border: 1px solid var(--line-strong);
@@ -762,5 +762,5 @@ input,
 }
 
 #demo-enterBtn.active {
-  background: #2d5a2d;
+  background: var(--text);
 }
