@@ -215,8 +215,8 @@ button:active {
   margin: 0 auto;
   background: #fff;
   border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 1rem;
+  border-radius: 16px;
+  padding: 0.7rem;
 }
 
 .kb-panel.open {
@@ -226,7 +226,7 @@ button:active {
 .kb-layout {
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
+  gap: 0.4rem;
 }
 
 /* Ghost */
@@ -261,16 +261,16 @@ button:active {
 .kb-fingers {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 0.6rem;
+  gap: 0.3rem;
 }
 
 .kb-finger-btn {
-  min-height: 78px;
+  min-height: 52px;
   background: white;
   border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 0.7rem 0.4rem;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+  border-radius: 12px;
+  padding: 0.4rem 0.25rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
 }
 
 .kb-finger-btn.active {
@@ -280,7 +280,7 @@ button:active {
 .finger-row {
   display: flex;
   justify-content: center;
-  gap: 0.22rem;
+  gap: 0.15rem;
 }
 
 .fl {
@@ -294,7 +294,7 @@ button:active {
 .kb-thumbs {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 0.75rem;
+  gap: 0.3rem;
 }
 
 .kb-lock-btn {
@@ -324,7 +324,7 @@ button:active {
 /* Backspace button inside ghost row */
 .kb-ghost-row {
   display: flex;
-  gap: 0.6rem;
+  gap: 0.3rem;
   align-items: stretch;
 }
 
@@ -334,12 +334,12 @@ button:active {
 
 .kb-bksp-btn {
   flex-shrink: 0;
-  min-width: 56px;
+  min-width: 48px;
   background: #f3f3f8;
   color: var(--text);
   font-size: 1.2rem;
   font-weight: 600;
-  border-radius: 14px;
+  border-radius: 10px;
   border: 1px solid var(--line);
   display: flex;
   align-items: center;
