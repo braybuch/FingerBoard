@@ -1391,17 +1391,16 @@ function modalGoTo(n) {
 }
 
 /* ============================================================
-   QWERTY → FINGERBOARD MORPH  (ported from FingerboardMorph.java)
+   QWERTY → FINGERBOARD MORPH (desktop + mobile corrected)
    ============================================================ */
 const GROUP_COLORS = ["#7c6fcd","#5c9e6e","#c06060","#c09030"];
 const GROUP_DELAY  = 0.18;
 
-let morphKeys      = [];
-let morphProgress  = 0;
-let morphForward   = true;
-let morphRaf       = null;
-let morphReady     = false;
-let morphLastTs    = null;
+let morphKeys = [];
+let morphProgress = 0;
+let morphForward = true;
+let morphRaf = null;
+let morphLastTs = null;
 let morphAutoTimer = null;
 
 function morphEase(t) {
@@ -1410,16 +1409,23 @@ function morphEase(t) {
 
 function morphBuildKeys(W, H) {
   morphKeys = [];
-  const keyW = 28, gap = 4;
+
+  const mobile = W < 700;
+  const scale = mobile
+    ? Math.max(0.62, Math.min(0.82, W / 520))
+    : Math.max(0.82, Math.min(1, W / 520));
+
+  const keyW = 26 * scale;
+  const gap = 4 * scale;
+
   const row1 = ["q","w","e","r","t","y","u","i","o","p"];
   const row2 = ["a","s","d","f","g","h","j","k","l"];
   const row3 = ["z","x","c","v","b","n","m"];
 
-  const totalW = row1.length * keyW + (row1.length-1)*gap;
+  const totalW = row1.length * keyW + (row1.length - 1) * gap;
   const sx = (W - totalW) / 2;
-  const sy = H * 0.12;
+  const sy = mobile ? H * 0.08 : H * 0.12;
 
-  // group assignment mirrors Java
   const groupOf = {
     q:0,w:0,e:0,r:0,t:0,y:0,u:0,
     a:1,s:1,d:1,f:1,g:1,h:1,j:1,
@@ -1427,7 +1433,7 @@ function morphBuildKeys(W, H) {
     i:3,o:3,p:3,k:3,l:3
   };
 
-  const addRow = (letters, offX, offY) => {
+  function addRow(letters, offX, offY) {
     letters.forEach((ch, i) => {
       morphKeys.push({
         text: ch,
@@ -1435,36 +1441,59 @@ function morphBuildKeys(W, H) {
         y: sy + offY,
         startX: sx + offX + i*(keyW+gap),
         startY: sy + offY,
-        targetX: 0, targetY: 0,
-        group: groupOf[ch] ?? 0
+        targetX: 0,
+        targetY: 0,
+        group: groupOf[ch]
       });
     });
-  };
+  }
 
-  addRow(row1, 0,    0);
-  addRow(row2, 14,   38);
-  addRow(row3, 38,   76);
+  addRow(row1, 0, 0);
+  addRow(row2, 14 * scale, 38 * scale);
+  addRow(row3, 38 * scale, 76 * scale);
 
-  // Fingerboard target positions
-  const gs = W / 4.6;
-  const bx = W * 0.09;
-  const by = H * 0.56;
-  const cg = 22, rg = 20;
+  /* FINAL 2×2 CENTERED GROUP GRID */
+  const clusterW = mobile ? 82 * scale : 100 * scale;
+  const clusterH = mobile ? 52 * scale : 62 * scale;
 
-  const targets = {
-    q:[bx,       by],    w:[bx+cg,   by],    e:[bx+cg*2, by],    r:[bx+cg*3, by],
-    t:[bx+10,    by+rg], y:[bx+cg+10,by+rg], u:[bx+cg*2+10,by+rg],
-    a:[bx+gs,    by],    s:[bx+gs+cg,by],    d:[bx+gs+cg*2,by],  f:[bx+gs+cg*3,by],
-    g:[bx+gs+10, by+rg], h:[bx+gs+cg+10,by+rg], j:[bx+gs+cg*2+10,by+rg],
-    z:[bx+gs*2,  by],    x:[bx+gs*2+cg,by],  c:[bx+gs*2+cg*2,by],v:[bx+gs*2+cg*3,by],
-    b:[bx+gs*2+10,by+rg],n:[bx+gs*2+cg+10,by+rg],m:[bx+gs*2+cg*2+10,by+rg],
-    i:[bx+gs*3,  by],    o:[bx+gs*3+cg,by],  p:[bx+gs*3+cg*2,by],
-    k:[bx+gs*3+10,by+rg],l:[bx+gs*3+cg+10,by+rg]
+  const clusterGapX = mobile ? W * 0.07 : W * 0.10;
+  const clusterGapY = mobile ? H * 0.08 : H * 0.12;
+
+  const totalGridW = clusterW * 2 + clusterGapX;
+  const totalGridH = clusterH * 2 + clusterGapY;
+
+  /* CRITICAL FIX:
+     Center vertically instead of pushing too low on desktop */
+  const gridStartX = (W - totalGridW) / 2;
+  const gridStartY = (H - totalGridH) / 2 + (mobile ? 10 : 4);
+
+  const clusterPos = [
+    [gridStartX, gridStartY],
+    [gridStartX + clusterW + clusterGapX, gridStartY],
+    [gridStartX, gridStartY + clusterH + clusterGapY],
+    [gridStartX + clusterW + clusterGapX, gridStartY + clusterH + clusterGapY]
+  ];
+
+  const layout = {
+    0: [["q","w","e","r"],["t","y","u"]],
+    1: [["a","s","d","f"],["g","h","j"]],
+    2: [["z","x","c","v"],["b","n","m"]],
+    3: [["i","o","p"],["k","l"]]
   };
 
   morphKeys.forEach(k => {
-    const t = targets[k.text];
-    if (t) { k.targetX = t[0]; k.targetY = t[1]; }
+    const group = k.group;
+    const [cx, cy] = clusterPos[group];
+    const rows = layout[group];
+
+    rows.forEach((row, r) => {
+      row.forEach((letter, c) => {
+        if (letter === k.text) {
+          k.targetX = cx + c * (18 * scale);
+          k.targetY = cy + r * (20 * scale);
+        }
+      });
+    });
   });
 }
 
@@ -1472,43 +1501,33 @@ function morphInit() {
   const canvas = document.getElementById("morph-canvas");
   if (!canvas) return;
 
-  // Size canvas to its CSS width
   const W = canvas.offsetWidth || 520;
   const PR = window.devicePixelRatio || 1;
-  canvas.width  = W * PR;
-  canvas.height = 200 * PR;
-  canvas.getContext("2d").scale(PR, PR);
-  const CW = W, CH = 200;
+  const mobile = window.innerWidth < 700;
 
-  morphBuildKeys(CW, CH);
+  const canvasHeight = mobile ? 250 : 220;
+
+  canvas.width = W * PR;
+  canvas.height = canvasHeight * PR;
+
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(PR, 0, 0, PR, 0, 0);
+
+  morphBuildKeys(W, canvasHeight);
+
   morphProgress = 0;
-  morphForward  = true;
-  morphReady    = true;
-  morphLastTs   = null;
+  morphForward = true;
+  morphLastTs = null;
 
-  morphDraw(CW, CH);
+  morphDraw(W, canvasHeight);
 
-  // Auto-play once after a short pause, then loop
   clearTimeout(morphAutoTimer);
-  morphAutoTimer = setTimeout(() => morphAnimate(CW, CH), 600);
-
-  canvas.onclick = () => {
-    morphStop();
-    if (!morphForward) {
-      // swap directions
-      morphKeys.forEach(k => {
-        [k.startX, k.startY, k.targetX, k.targetY] =
-          [k.targetX, k.targetY, k.startX, k.startY];
-      });
-      morphForward = true;
-    }
-    morphProgress = 0;
-    morphAnimate(CW, CH);
-  };
+  morphAutoTimer = setTimeout(() => morphAnimate(W, canvasHeight), 600);
 }
 
 function morphAnimate(W, H) {
   if (morphRaf) cancelAnimationFrame(morphRaf);
+
   const maxP = 1 + GROUP_DELAY * 3;
 
   const step = (ts) => {
@@ -1516,28 +1535,28 @@ function morphAnimate(W, H) {
     const dt = (ts - morphLastTs) / 1000;
     morphLastTs = ts;
 
-    morphProgress += dt * 0.65;   // speed — adjust freely
+    morphProgress += dt * 0.65;
 
     if (morphProgress >= maxP) {
       morphProgress = maxP;
       morphDraw(W, H);
-      updateMorphCaption(true);
-      // Pause then reverse
+
       morphAutoTimer = setTimeout(() => {
         morphKeys.forEach(k => {
           [k.startX, k.startY, k.targetX, k.targetY] =
-            [k.targetX, k.targetY, k.startX, k.startY];
+          [k.targetX, k.targetY, k.startX, k.startY];
         });
+
         morphForward = !morphForward;
         morphProgress = 0;
         morphLastTs = null;
         morphAnimate(W, H);
       }, 1800);
+
       return;
     }
 
     morphDraw(W, H);
-    updateMorphCaption(false);
     morphRaf = requestAnimationFrame(step);
   };
 
@@ -1547,51 +1566,53 @@ function morphAnimate(W, H) {
 function morphDraw(W, H) {
   const canvas = document.getElementById("morph-canvas");
   if (!canvas) return;
+
   const ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, W, H);
 
-  const kw = 24, kh = 24, r = 6;
-  const maxP = 1 + GROUP_DELAY * 3;
-  const overallT = Math.min(1, morphProgress / maxP);
+  const mobile = W < 700;
+  const scale = mobile
+    ? Math.max(0.62, Math.min(0.82, W / 520))
+    : Math.max(0.82, Math.min(1, W / 520));
 
+  const kw = 22 * scale;
+  const kh = 22 * scale;
+  const r = 5 * scale;
 
   morphKeys.forEach(k => {
-    const localT = morphEase(Math.max(0, Math.min(1,
-      morphProgress - k.group * GROUP_DELAY)));
+    const localT = morphEase(
+      Math.max(0, Math.min(1, morphProgress - k.group * GROUP_DELAY))
+    );
+
     const x = k.startX + (k.targetX - k.startX) * localT;
     const y = k.startY + (k.targetY - k.startY) * localT;
 
-    // Key background
     ctx.fillStyle = "#ffffff";
     ctx.strokeStyle = GROUP_COLORS[k.group] + "88";
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = 1.2;
+
     ctx.beginPath();
     ctx.roundRect(x, y, kw, kh, r);
     ctx.fill();
     ctx.stroke();
 
-    // Letter
     ctx.fillStyle = GROUP_COLORS[k.group];
-    ctx.font = "bold 11px system-ui, sans-serif";
+    ctx.font = `bold ${10 * scale}px system-ui`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(k.text, x + kw/2, y + kh/2);
   });
 }
 
-function updateMorphCaption(done) {
-  const el = document.getElementById("morph-caption");
-  if (!el) return;
-  const maxP = 1 + GROUP_DELAY * 3;
-  const t = morphProgress / maxP;
-  if (done && morphForward)       el.textContent = "";
-  else if (done && !morphForward) el.textContent = "";
-  else if (t < 0.15)              el.textContent = "";
-  else                            el.textContent = "";
-}
+window.addEventListener("resize", () => {
+  if (currentModalSlide === 1) morphInit();
+});
 
 function morphStop() {
-  if (morphRaf) { cancelAnimationFrame(morphRaf); morphRaf = null; }
+  if (morphRaf) {
+    cancelAnimationFrame(morphRaf);
+    morphRaf = null;
+  }
   clearTimeout(morphAutoTimer);
   morphLastTs = null;
 }
