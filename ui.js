@@ -105,27 +105,29 @@ function morphBuildKeys(W, H) {
   addRow(row2, 14 * scale, 38 * scale);
   addRow(row3, 38 * scale, 76 * scale);
 
-  /* FINAL 2×2 CENTERED GROUP GRID */
-  const clusterW = mobile ? 82 * scale : 100 * scale;
-  const clusterH = mobile ? 52 * scale : 62 * scale;
+/* FINAL SINGLE HORIZONTAL ROW — COMPACT + HIGHER */
+const clusterW = mobile ? 62 * scale : 72 * scale;
+const clusterH = mobile ? 42 * scale : 48 * scale;
 
-  const clusterGapX = mobile ? W * 0.07 : W * 0.10;
-  const clusterGapY = mobile ? H * 0.08 : H * 0.12;
+const clusterGapX = mobile ? 16 * scale : 22 * scale;
 
-  const totalGridW = clusterW * 2 + clusterGapX;
-  const totalGridH = clusterH * 2 + clusterGapY;
+/* Four groups in one row */
+const totalRowW = clusterW * 4 + clusterGapX * 3;
 
-  /* CRITICAL FIX:
-     Center vertically instead of pushing too low on desktop */
-  const gridStartX = (W - totalGridW) / 2;
-  const gridStartY = (H - totalGridH) / 2 + (mobile ? 10 : 4);
+/* Center horizontally */
+const rowStartX = (W - totalRowW) / 2;
 
-  const clusterPos = [
-    [gridStartX, gridStartY],
-    [gridStartX + clusterW + clusterGapX, gridStartY],
-    [gridStartX, gridStartY + clusterH + clusterGapY],
-    [gridStartX + clusterW + clusterGapX, gridStartY + clusterH + clusterGapY]
-  ];
+/* Raise final resting position so it overlaps original keyboard area */
+const rowY = mobile
+  ? H * 0.34
+  : H * 0.38;
+
+const clusterPos = [
+  [rowStartX, rowY],
+  [rowStartX + (clusterW + clusterGapX) * 1, rowY],
+  [rowStartX + (clusterW + clusterGapX) * 2, rowY],
+  [rowStartX + (clusterW + clusterGapX) * 3, rowY]
+];
 
   const layout = {
     0: [["q","w","e","r"],["t","y","u"]],
@@ -158,7 +160,7 @@ function morphInit() {
   const PR = window.devicePixelRatio || 1;
   const mobile = window.innerWidth < 700;
 
-  const canvasHeight = mobile ? 250 : 220;
+  const canvasHeight = mobile ? 150 : 90;
 
   canvas.width = W * PR;
   canvas.height = canvasHeight * PR;
