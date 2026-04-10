@@ -33,8 +33,11 @@ function modalGoTo(n) {
   if (newDot) newDot.classList.add("active");
 
   // Kick off morph when landing on slide 2
+  // Kick off demo when landing on slide 3
   if (n === 1) {
     setTimeout(morphInit, 120);
+  } if (n=== 2) {
+    setTimeout(startModalDemo, 120);
   } else {
     morphStop();
   }
@@ -469,4 +472,78 @@ if (kbSig.length < expectedSig.length) {
   // Default: sig matches length, just keep paging forward.
   const nextBtn = document.querySelector(".kb-page-btn");
   if (nextBtn) nextBtn.classList.add("tutorial-glow");
+}
+
+let demoTimer = null;
+let demoPulseTimeout = null;
+let demoStepIndex = 0;
+
+const demoSteps = [
+  {press:2, stream:["hat","heat","held","hello","helm"], typed:"h", ghost:"ello", commit:""},
+  {press:3, stream:["heavy","hello","helium","helmet"], typed:"he", ghost:"llo", commit:""},
+  {press:0, stream:["hello","help","helm"], typed:"hel", ghost:"lo", commit:""},
+  {press:0, stream:["hello","he","helm"], typed:"hell", ghost:"o", commit:""},
+  {press:0, stream:["hello"], typed:"hello", ghost:"", commit:""},
+  {enter:true, typed:"", ghost:"", commit:"hello "},
+  {press:3, stream:["word","work","worm","world"], typed:"w", ghost:"orld", commit:"hello "},
+  {press:0, stream:["word","work","world"], typed:"wo", ghost:"rld", commit:"hello "},
+  {press:3, stream:["word","world"], typed:"wor", ghost:"ld", commit:"hello "},
+  {press:0, stream:["world"], typed:"worl", ghost:"d", commit:"hello "},
+  {press:2, stream:["world"], typed:"world", ghost:"", commit:"hello "},
+  {enter:true, typed:"", ghost:"", commit:"hello world"}
+];
+
+function clearDemoKeys() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById("demo-k"+i)?.classList.remove("active");
+  }
+  document.getElementById("demo-enterBtn")?.classList.remove("active");
+}
+
+function pulseDemoElement(el) {
+  if (!el) return;
+  if (demoPulseTimeout) clearTimeout(demoPulseTimeout);
+
+  el.classList.remove("active");
+  void el.offsetWidth;
+  el.classList.add("active");
+
+  demoPulseTimeout = setTimeout(() => {
+    el.classList.remove("active");
+  }, 160);
+}
+
+function renderDemoStep(step) {
+  clearDemoKeys();
+
+  if (step.enter) {
+    pulseDemoElement(document.getElementById("demo-enterBtn"));
+  } else {
+    pulseDemoElement(document.getElementById("demo-k"+step.press));
+  }
+
+  document.getElementById("demo-stream").textContent =
+    step.stream ? step.stream.join("   ") : "";
+
+  document.getElementById("demo-committed").textContent = step.commit || "";
+  document.getElementById("demo-ghostTyped").textContent = step.typed || "";
+  document.getElementById("demo-ghostPending").textContent = step.ghost || "";
+}
+
+function advanceModalDemo() {
+  renderDemoStep(demoSteps[demoStepIndex]);
+  demoStepIndex++;
+
+  if (demoStepIndex >= demoSteps.length) {
+    clearInterval(demoTimer);
+    setTimeout(startModalDemo, 1800);
+  }
+}
+
+function startModalDemo() {
+  clearInterval(demoTimer);
+  clearDemoKeys();
+  demoStepIndex = 0;
+  advanceModalDemo();
+  demoTimer = setInterval(advanceModalDemo, 900);
 }

@@ -18,8 +18,7 @@
       <!-- Slide 1: What is it -->
       <div class="modal-slide active" id="mslide-0">
         <div class="modal-body">
-          <p>FingerBoard is a predictive text keyboard. Instead of typing the letter you press the button the letter belongs to.</p>
-          <p>This web app is the tutorial. It teaches you the basics and helps build muscle memory.</p>
+          <p>FingerBoard is a handheld predictive text keyboard.</p>
           <p>Work through the tutorial, then practice at your own pace. Your stats are tracked as you improve.</p>
         </div>
         <div class="modal-nav-row">
@@ -31,7 +30,7 @@
       <!-- Slide 2: Layout morph -->
       <div class="modal-slide" id="mslide-1">
         <div class="modal-body">
-          <p>The full QWERTY keyboard was split into <strong>4 groups</strong></p>
+          <p>The full keyboard was split into <strong>4 groups</strong></p>
         </div>
         <div class="modal-morph-wrap">
           <canvas id="morph-canvas" width="520" height="200"></canvas>
@@ -48,13 +47,51 @@
       <div class="modal-slide" id="mslide-2">
         <div class="modal-body">
           <p>As you press buttons, the system finds <i>all words</i> that match that sequence.</p>
-          <p>After a few presses, usually just one word fits. Press <strong>Next</strong> to page through matches if the suggestion isn't right after you've finished typing.</p>
-          <p>During the tutorial the button you should press will be <strong>highlighted in green.</strong> But once you finish the tutorial, you're on your own!</p>
         </div>
+
+        <div class="modal-morph-wrap modal-demo-wrap">
+
+          <div id="demo-stream" class="prediction-stream"></div>
+
+          <div class="ghost-box">
+            <span id="demo-committed" class="committed-text"></span><span id="demo-ghostTyped" class="ghost-typed"></span><span id="demo-ghostPipe" class="ghost-pipe">|</span><span id="demo-ghostPending" class="ghost-pending"></span>
+          </div>
+
+          <div class="keyboard">
+            <div class="kb-finger-btn" id="demo-k3">
+              <div class="finger-row"><span class="fl">q</span><span class="fl">w</span><span class="fl">e</span><span class="fl">r</span></div>
+              <div class="finger-row"><span class="fl">t</span><span class="fl">y</span><span class="fl">u</span></div>
+            </div>
+
+            <div class="kb-finger-btn" id="demo-k2">
+              <div class="finger-row"><span class="fl">a</span><span class="fl">s</span><span class="fl">d</span><span class="fl">f</span></div>
+              <div class="finger-row"><span class="fl">g</span><span class="fl">h</span><span class="fl">j</span></div>
+            </div>
+
+            <div class="kb-finger-btn" id="demo-k1">
+              <div class="finger-row"><span class="fl">z</span><span class="fl">x</span><span class="fl">c</span><span class="fl">v</span></div>
+              <div class="finger-row"><span class="fl">b</span><span class="fl">n</span><span class="fl">m</span></div>
+            </div>
+
+            <div class="kb-finger-btn" id="demo-k0">
+              <div class="finger-row"><span class="fl">i</span><span class="fl">o</span><span class="fl">p</span></div>
+              <div class="finger-row"><span class="fl">k</span><span class="fl">l</span></div>
+            </div>
+          </div>
+
+          <div class="kb-thumbs">
+            <button class="kb-back-btn">← Prev</button>
+            <button class="kb-lock-btn" id="demo-enterBtn">Enter</button>
+            <button class="kb-page-btn">Next →</button>
+          </div>
+
+        </div>
+
         <div class="modal-nav-row">
           <button class="modal-nav-back" onclick="modalGoTo(1)">←</button>
           <button class="modal-nav-next" onclick="dismissWelcomeModal()">Let's go!</button>
         </div>
+
         <button class="modal-skip-link" onclick="dismissWelcomeModal(); skipTutorial()">I know what I'm doing (skip tutorial)</button>
       </div>
 
