@@ -35,11 +35,11 @@ const BUILTIN_WORDS = [
   "press","enter","when","the","word","on","screen","is","correct",
   "next","choose","a","different","matching","full","words","lets","you","type","more","efficiently",
   "do","not","need","every","letter",
-  "system","will","predict","for",
+  "but","it","helps","know","where","look",
   "after","few","presses","most","likely","usually","appear",
   "common","become","familiar","very","quickly","with","practice",
   "soon","longer","without","looking","at","keyboard",
-  "designed","comfortable","and","quick","typing",
+  "designed","accessible","and","efficient","typing",
   "now","begin","practicing","let","your","fingers","learn","patterns",
 
   // practice sentence words

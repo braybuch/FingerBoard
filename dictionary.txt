@@ -37,6 +37,7 @@ few
 fewer
 for
 full
+it
 hand
 let
 lets
@@ -45,6 +46,8 @@ letter
 like
 likely
 longer
+help
+helps
 matching
 most
 move
@@ -54,6 +57,7 @@ need
 next
 of
 one
+where
 pattern
 patterns
 practice
@@ -69,6 +73,7 @@ system
 type
 typing
 very
+but
 when
 with
 will
@@ -94,15 +99,18 @@ behind
 beside
 bicycle
 blooming
+know
 both
 bread
 breeze
 bright
 brightly
+look
 brown
 calm
 carried
 challenge
+accessible
 charger
 chimed
 city
@@ -139,7 +147,6 @@ habits
 hall
 headphones
 heavy
-helps
 her
 home
 improve
@@ -239,7 +246,6 @@ wooden
 wrote
 handed
 device
-it
 uses
 only
 four
@@ -329,7 +335,6 @@ this
 or
 had
 by
-but
 what
 all
 we
@@ -352,7 +357,6 @@ would
 him
 into
 has
-look
 two
 more
 write
@@ -381,7 +385,6 @@ sound
 take
 little
 work
-know
 live
 me
 back
@@ -394,8 +397,6 @@ man
 think
 say
 great
-where
-help
 much
 line
 right
@@ -1781,7 +1782,6 @@ intend
 limit
 mention
 prioritize
-accessible
 adaptive
 admission
 aesthetic

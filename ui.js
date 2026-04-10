@@ -418,15 +418,34 @@ function updateTutorialHint() {
   }
 
   // Sig is a correct prefix but not complete yet — show next finger.
-  if (kbSig.length < expectedSig.length) {
-    const nextChar = expected[kbSig.length]?.toLowerCase();
-    const finger = CHAR_TO_KEY[nextChar];
-    if (finger !== undefined) {
-      const btn = document.getElementById("fb-" + finger);
-      if (btn) btn.classList.add("tutorial-glow");
+if (kbSig.length < expectedSig.length) {
+  const nextChar = expected[kbSig.length]?.toLowerCase();
+  const finger = CHAR_TO_KEY[nextChar];
+
+  if (finger !== undefined) {
+    const btn = document.getElementById("fb-" + finger);
+
+    if (btn) {
+      const halfway = tutorialIndex >= Math.floor(TUTORIAL.length / 2);
+
+      if (halfway) {
+        // Highlight only the letter inside the character-button
+        const letterEl = Array.from(btn.querySelectorAll(".fl"))
+        .find(el => el.textContent.trim().toLowerCase() === nextChar);
+        if (letterEl) {
+          letterEl.classList.add("tutorial-glow");
+        } else {
+          btn.classList.add("tutorial-glow");
+        }
+      } else {
+        // First half of tutorial: highlight whole button
+        btn.classList.add("tutorial-glow");
+      }
     }
-    return;
   }
+
+  return;
+}
 
   // Sig length matches expected but suggestion isn't right yet.
   // If we're browsing and the expected word is already in the match list,
