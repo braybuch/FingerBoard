@@ -484,7 +484,7 @@ const demoSteps = [
   {press:2, stream:["hat","heat","held","hello","helm"], typed:"h", ghost:"ello", commit:""},
   {press:3, stream:["heavy","hello","helium","helmet"], typed:"he", ghost:"llo", commit:""},
   {press:0, stream:["hello","help","helm"], typed:"hel", ghost:"lo", commit:""},
-  {press:0, stream:["hello","he","helm"], typed:"hell", ghost:"o", commit:""},
+  {press:0, stream:["hello","helm"], typed:"hell", ghost:"o", commit:""},
   {press:0, stream:["hello"], typed:"hello", ghost:"", commit:""},
   {enter:true, typed:"", ghost:"", commit:"hello "},
   {press:3, stream:["word","work","worm","world"], typed:"w", ghost:"orld", commit:"hello "},
