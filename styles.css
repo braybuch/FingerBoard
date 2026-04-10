@@ -302,6 +302,7 @@ button:active {
   color: white;
   font-weight: 700;
   font-size: 1.05rem;
+  border: 1px solid var(--line-strong);
 }
 
 .kb-page-btn {
@@ -309,6 +310,7 @@ button:active {
   color: var(--text);
   font-weight: 600;
   font-size: 1.05rem;
+  border: 1px solid var(--line);
 }
 
 .kb-back-btn {
@@ -316,6 +318,7 @@ button:active {
   color: var(--text);
   font-weight: 600;
   font-size: 1.05rem;
+  border: 1px solid var(--line);
 }
 
 /* Backspace button inside ghost row */
