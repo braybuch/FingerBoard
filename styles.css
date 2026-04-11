@@ -761,8 +761,30 @@ input,
   transform: translateY(2px);
 }
 
-#demo-enterBtn.active {
-  background: var(--text);
+/* Practice complete modal copy button */
+.practcomp-copy-btn {
+  width: 100%;
+  background: var(--card-soft);
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 500;
+  border: 1px solid var(--line-strong);
+  border-radius: 16px;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.practcomp-copy-btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.practcomp-copy-btn.copied {
+  background: #f0fdf4;
+  color: var(--success);
+  border-color: var(--success);
 }
 
 /* Tutorial complete modal stats */

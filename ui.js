@@ -2,6 +2,38 @@
    UI HELPERS & MODAL
    ========================================================= */
 
+function showPracticeCompleteModal(wpm, kpc, streakVal) {
+  document.getElementById("practcomp-wpm").textContent    = wpm      ?? "—";
+  document.getElementById("practcomp-kpc").textContent    = kpc      ?? "—";
+  document.getElementById("practcomp-streak").textContent = streakVal ?? "—";
+  // Reset copy button in case it was used before
+  const btn = document.getElementById("practcomp-copy-btn");
+  btn.textContent = "copy my score to clipboard";
+  btn.classList.remove("copied");
+  document.getElementById("practice-complete-modal").classList.remove("hidden");
+}
+
+function dismissPracticeCompleteModal() {
+  document.getElementById("practice-complete-modal").classList.add("hidden");
+}
+
+function copyScoreToClipboard() {
+  const wpm    = document.getElementById("practcomp-wpm").textContent;
+  const kpc    = document.getElementById("practcomp-kpc").textContent;
+  const streak = document.getElementById("practcomp-streak").textContent;
+  const text   = `fingerboard champion: WPM - ${wpm}. KPC - ${kpc}. Streak - ${streak}.\nhttps://BrayBuch.github.io/FingerBoard/`;
+
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById("practcomp-copy-btn");
+    btn.textContent = "copied!";
+    btn.classList.add("copied");
+    setTimeout(() => {
+      btn.textContent = "copy my score to clipboard";
+      btn.classList.remove("copied");
+    }, 2000);
+  });
+}
+
 function showTutorialCompleteModal(wpm, kpc, streakVal) {
   document.getElementById("tutcomp-wpm").textContent    = wpm      ?? "—";
   document.getElementById("tutcomp-kpc").textContent    = kpc      ?? "—";

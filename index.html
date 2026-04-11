@@ -18,7 +18,7 @@
       <!-- Slide 1: What is it -->
       <div class="modal-slide active" id="mslide-0">
         <div class="modal-body">
-          <p>fingerboard is a handheld predictive text keyboard</p>
+          <p>fingerboard is a predictive text keyboard</p>
         </div>
         <div class="modal-nav-row">
           <button class="modal-nav-next" onclick="modalGoTo(1)">Next</button>
@@ -29,7 +29,7 @@
       <!-- Slide 2: Layout morph -->
       <div class="modal-slide" id="mslide-1">
         <div class="modal-body">
-          <p>the full keyboard was split into <strong>four groups</strong></p>
+          <p>the keyboard was split into <strong>four groups</strong></p>
         </div>
         <div class="modal-morph-wrap">
           <canvas id="morph-canvas" width="520" height="200"></canvas>
@@ -45,7 +45,7 @@
       <!-- Slide 3: How it works -->
       <div class="modal-slide" id="mslide-2">
         <div class="modal-body">
-          <p>as you type, fingerboard finds <i>all words</i> that match the sequence</p>
+          <p>as you type fingerboard finds <i>all words</i> that match the sequence</p>
         </div>
 
         <div class="modal-morph-wrap modal-demo-wrap">
@@ -124,6 +124,34 @@
   </div>
 </div>
 
+<!-- Practice complete modal -->
+<div class="modal-backdrop hidden" id="practice-complete-modal">
+  <div class="modal-card">
+    <div class="modal-logo">practice complete!</div>
+    <div class="modal-tagline">you are a fingerboard champion</div>
+
+    <div class="tutcomp-stats">
+      <div class="tutcomp-stat">
+        <div class="tutcomp-stat-value" id="practcomp-wpm">-</div>
+        <div class="tutcomp-stat-label">words per min</div>
+      </div>
+      <div class="tutcomp-stat">
+        <div class="tutcomp-stat-value" id="practcomp-kpc">-</div>
+        <div class="tutcomp-stat-label">keystrokes / char</div>
+      </div>
+      <div class="tutcomp-stat">
+        <div class="tutcomp-stat-value" id="practcomp-streak">-</div>
+        <div class="tutcomp-stat-label">best streak</div>
+      </div>
+    </div>
+
+    <div class="modal-nav-row" style="margin-top:1.25rem; flex-direction: column; gap: 0.5rem;">
+      <button class="modal-nav-next" onclick="dismissPracticeCompleteModal()">keep practicing</button>
+      <button class="practcomp-copy-btn" id="practcomp-copy-btn" onclick="copyScoreToClipboard()">copy my score to clipboard</button>
+    </div>
+  </div>
+</div>
+
 <div class="app-shell">
 
 <div class="app-header">
@@ -133,7 +161,7 @@
 
 <div class="stats">
   <div class="stat">
-    <div class="stat-value" id="wpm-display">—</div>
+    <div class="stat-value" id="wpm-display">-</div>
     <div class="stat-label">words per minute</div>
   </div>
   <div class="stat">
@@ -141,11 +169,11 @@
     <div class="stat-label">streak</div>
   </div>
   <div class="stat">
-    <div class="stat-value" id="kpc-display">—</div>
+    <div class="stat-value" id="kpc-display">-</div>
     <div class="stat-label">keystrokes per character</div>
   </div>
   <div class="stat" style="display:none">
-    <div class="stat-value" id="acc-display">—</div>
+    <div class="stat-value" id="acc-display">-</div>
     <div class="stat-label">Accuracy</div>
   </div>
 </div>

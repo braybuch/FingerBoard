@@ -149,14 +149,19 @@ function submitAttempt() {
           setFeedback("tutorial complete!", "good");
           const elapsed = (Date.now() - startTime) / 1000 / 60;
           const finalWpm = Math.round(currentWords.length / elapsed);
-          const finalKpc = totalCharacters > 0 ? (totalKeystrokes / totalCharacters).toFixed(2) : "—";
+          const finalKpc = totalCharacters > 0 ? (totalKeystrokes / totalCharacters).toFixed(2) : "-";
           setTimeout(() => showTutorialCompleteModal(finalWpm, finalKpc, streak), 750);
         } else {
           setFeedback("nice!", "good");
         }
       } else {
         practicesDone++;
-        setFeedback("nice work!", "good");
+        if (practicesDone >= 20) {
+          const finalKpc = totalCharacters > 0 ? (totalKeystrokes / totalCharacters).toFixed(2) : "-";
+          setTimeout(() => showPracticeCompleteModal(wpm, finalKpc, streak), 750);
+        } else {
+          setFeedback("nice work!", "good");
+        }
       }
       setTimeout(newRound, 700);
     } else {
