@@ -4,7 +4,7 @@
 
 const TUTORIAL = [
   "welcome to fingerboard",
-  "press enter when the word on screen is correct",
+  "press enter when the word is correct",
   "press next if it is not correct",
   "you do not need to type every letter",
   "but it helps to know where to look",

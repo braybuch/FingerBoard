@@ -448,8 +448,8 @@ function updateTutorialHint() {
     return;
   }
 
-  // Slot 2 (next suggestion) is the correct word — highlight next button
-  if (kbSuggestions[1] === expected) {
+  // Slot 2 (next suggestion) is the correct word AND contains current ghost word — highlight next button
+  if (kbSuggestions[1] === expected && kbSuggestions[1].startsWith(kbSuggestions[0])) {
     const nextBtn = document.querySelector(".kb-page-btn");
     if (nextBtn) nextBtn.classList.add("tutorial-glow");
     return;
