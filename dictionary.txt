@@ -14,6 +14,8 @@ fingers
 after
 not
 appear
+every
+but
 you
 your
 begin
@@ -30,7 +32,6 @@ word
 words
 make
 makes
-every
 fast
 familiar
 few
@@ -54,6 +55,8 @@ most
 move
 movement
 movements
+variation
+variations
 need
 next
 of
@@ -74,7 +77,6 @@ system
 type
 typing
 very
-but
 when
 with
 will
@@ -1538,7 +1540,6 @@ technology
 transformation
 transportation
 understanding
-variation
 visualization
 vulnerability
 achievement
