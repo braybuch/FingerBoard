@@ -451,10 +451,11 @@ function updateTutorialHint() {
   // Slot 2 (next suggestion) is the correct word AND is a variation of the ghost word — highlight next button
   if (kbSuggestions[1] === expected) {
     const ghost = kbSuggestions[0];
-    const isVariation = 
+    const isVariation = ghost.length >= 3 && (
       kbSuggestions[1].startsWith(ghost) ||
       (ghost.length > 1 && kbSuggestions[1].startsWith(ghost.slice(0, -1))) ||
-      (ghost.length > 2 && kbSuggestions[1].startsWith(ghost.slice(0, -2)));
+      (ghost.length > 2 && kbSuggestions[1].startsWith(ghost.slice(0, -2)))
+    );
     
     if (isVariation) {
       const nextBtn = document.querySelector(".kb-page-btn");
