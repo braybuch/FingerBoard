@@ -17,11 +17,11 @@ const PRACTICE = [
   "the quick brown fox jumps over the lazy dog near the river bank",
   "typing every day helps improve both speed and accuracy over time",
   "a calm morning breeze carried leaves across the empty parking lot",
-  "she packed her notebook headphones and charger before leaving home",
+  "they packed their notebook and charger before leaving home",
   "bright stars filled the sky as the city lights faded in the distance",
   "learning to type without looking at the keyboard takes steady practice",
   "the small coffee shop on the corner serves fresh bread every morning",
-  "they finished reading the article just before the meeting began online",
+  "she finished reading the article just before the meeting began online",
   "rain tapped softly against the window during the quiet afternoon class",
   "simple habits repeated daily often lead to remarkable long term progress",
   "the bicycle leaned against the fence beside a row of blooming flowers",
@@ -156,7 +156,7 @@ function submitAttempt() {
         }
       } else {
         practicesDone++;
-        if (practicesDone >= 20) {
+        if (practicesDone === 10) {
           const finalKpc = totalCharacters > 0 ? (totalKeystrokes / totalCharacters).toFixed(2) : "-";
           setTimeout(() => showPracticeCompleteModal(wpm, finalKpc, streak), 750);
         } else {
