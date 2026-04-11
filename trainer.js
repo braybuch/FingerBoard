@@ -15,7 +15,7 @@ const PRACTICE = [
   "the quick brown fox jumps over the lazy dog near the river bank",
   "typing every day helps improve both speed and accuracy over time",
   "a calm morning breeze carried leaves across the empty parking lot",
-  "she packed her notebook headphones and charger before leaving home",
+  "she packed her notebook and charger before leaving home",
   "bright stars filled the sky as the city lights faded in the distance",
   "learning to type without looking at the keyboard takes steady practice",
   "the small coffee shop on the corner serves fresh bread every morning",
@@ -83,7 +83,7 @@ function updateProgress() {
     label.textContent = tutorialIndex + " / " + TUTORIAL.length;
     modeEl.textContent = "tutorial";
   } else {
-    const pct = Math.min(100, Math.round((practicesDone / 20) * 100));
+    const pct = Math.min(100, Math.round((practicesDone / 10) * 100));
     fill.style.width = pct + "%";
     label.textContent = practicesDone + " completed";
     modeEl.textContent = "free practice";
