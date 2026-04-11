@@ -6,10 +6,8 @@ const TUTORIAL = [
   "welcome to fingerboard",
   "press enter when the word is correct",
   "press next if it is not correct",
-  "you do not need to type every letter",
-  "but it helps to know where to look",
+  "it helps to know where to look for a letter",
   "press next to get variations of words",
-  "fingerboard is designed for accessible and efficient typing",
   "now begin practicing and let your fingers learn"
 ];
 
