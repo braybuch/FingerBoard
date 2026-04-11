@@ -17,11 +17,11 @@ const PRACTICE = [
   "the quick brown fox jumps over the lazy dog near the river bank",
   "typing every day helps improve both speed and accuracy over time",
   "a calm morning breeze carried leaves across the empty parking lot",
-  "they packed their notebook and charger before leaving home",
+  "she packed her notebook headphones and charger before leaving home",
   "bright stars filled the sky as the city lights faded in the distance",
   "learning to type without looking at the keyboard takes steady practice",
   "the small coffee shop on the corner serves fresh bread every morning",
-  "she finished reading the article just before the meeting began online",
+  "they finished reading the article just before the meeting began online",
   "rain tapped softly against the window during the quiet afternoon class",
   "simple habits repeated daily often lead to remarkable long term progress",
   "the bicycle leaned against the fence beside a row of blooming flowers",
@@ -49,6 +49,30 @@ let streak          = 0;
 
 let totalKeystrokes = 0;
 let totalCharacters = 0;
+
+let practiceDeck = [];
+let deckIndex    = 0;
+
+function shuffleArray(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function nextPracticeSentence() {
+  if (deckIndex >= practiceDeck.length) {
+    practiceDeck = shuffleArray(PRACTICE);
+    deckIndex    = 0;
+  }
+  console.log("All sentences ");
+  for (let i = 0; i < practiceDeck.length; i++) {
+    console.log(`  ${i}: ${practiceDeck[i]}`);
+  }
+  return practiceDeck[deckIndex++];
+}
 
 function updateProgress() {
   const fill  = document.getElementById("progress-fill");
@@ -80,7 +104,7 @@ function newRound() {
   if (mode === "tutorial") {
     sentence = TUTORIAL[tutorialIndex];
   } else {
-    sentence = PRACTICE[Math.floor(Math.random() * PRACTICE.length)];
+    sentence = nextPracticeSentence();
   }
 
   currentWords = sentence.split(" ");

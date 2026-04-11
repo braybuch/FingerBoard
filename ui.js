@@ -21,7 +21,7 @@ function copyScoreToClipboard() {
   const wpm    = document.getElementById("practcomp-wpm").textContent;
   const kpc    = document.getElementById("practcomp-kpc").textContent;
   const streak = document.getElementById("practcomp-streak").textContent;
-  const text   = `fingerboard champion: WPM - ${wpm}. KPC - ${kpc}. Streak - ${streak}.\nhttps://BrayBuch.github.io/FingerBoard/`;
+  const text   = `fingerboard champion: ${wpm}wpm, ${kpc}kpc, ${streak} streak\nhttps://BrayBuch.github.io/FingerBoard/`;
 
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById("practcomp-copy-btn");
@@ -445,6 +445,13 @@ function updateTutorialHint() {
   if (kbSuggestions[0] === expected) {
     const enterBtn = document.querySelector(".kb-lock-btn");
     if (enterBtn) enterBtn.classList.add("tutorial-glow");
+    return;
+  }
+
+  // Slot 2 (next suggestion) is the correct word — highlight next button
+  if (kbSuggestions[1] === expected) {
+    const nextBtn = document.querySelector(".kb-page-btn");
+    if (nextBtn) nextBtn.classList.add("tutorial-glow");
     return;
   }
 
