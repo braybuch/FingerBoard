@@ -14,6 +14,7 @@ fingers
 after
 not
 appear
+enter
 every
 but
 you
@@ -23,7 +24,6 @@ become
 choose
 common
 comfortable
-enter
 now
 correct
 different
