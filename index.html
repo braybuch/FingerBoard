@@ -19,8 +19,6 @@
       <div class="modal-slide active" id="mslide-0">
         <div class="modal-body">
           <p>fingerboard is a handheld predictive text keyboard</p>
-          <p>work through the tutorial, then practice at your own pace</p>
-          <p>your stats are tracked as you improve</p>
         </div>
         <div class="modal-nav-row">
           <button class="modal-nav-next" onclick="modalGoTo(1)">Next</button>
@@ -31,7 +29,7 @@
       <!-- Slide 2: Layout morph -->
       <div class="modal-slide" id="mslide-1">
         <div class="modal-body">
-          <p>a keyboard can be broken down into <strong>four</strong> sections</p>
+          <p>the full keyboard was split into <strong>four groups</strong></p>
         </div>
         <div class="modal-morph-wrap">
           <canvas id="morph-canvas" width="520" height="200"></canvas>
@@ -89,6 +87,39 @@
         <button class="modal-skip-link" onclick="dismissWelcomeModal(); skipTutorial()">I know what I'm doing (skip tutorial)</button>
       </div>
 
+    </div>
+  </div>
+</div>
+
+<!-- Tutorial complete modal -->
+<div class="modal-backdrop hidden" id="tutorial-complete-modal">
+  <div class="modal-card">
+    <div class="modal-logo" style="margin-top:0.25rem;">tutorial complete!</div>
+    <div class="modal-tagline">your stats are tracked as you improve</div>
+
+    <div class="tutcomp-stats" id="tutcomp-stats">
+      <div class="tutcomp-stat">
+        <div class="tutcomp-stat-value" id="tutcomp-wpm">-</div>
+        <div class="tutcomp-stat-label">words per min</div>
+      </div>
+      <div class="tutcomp-stat">
+        <div class="tutcomp-stat-value" id="tutcomp-kpc">-</div>
+        <div class="tutcomp-stat-label">keystrokes / char</div>
+      </div>
+      <div class="tutcomp-stat">
+        <div class="tutcomp-stat-value" id="tutcomp-streak">-</div>
+        <div class="tutcomp-stat-label">streak</div>
+      </div>
+    </div>
+
+    <div class="modal-body" style="margin-top:1rem; background:#fffbeb; border:1px solid #fde68a; border-radius:12px; padding:0.85rem 1rem;">
+      <p style="font-size:0.88rem; color:#92400e; margin:0;">
+        in free practice there are no green tutorial hints
+      </p>
+    </div>
+
+    <div class="modal-nav-row" style="margin-top:1.25rem;">
+      <button class="modal-nav-next" onclick="dismissTutorialCompleteModal()">Start practicing →</button>
     </div>
   </div>
 </div>

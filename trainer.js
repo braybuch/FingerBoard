@@ -145,7 +145,15 @@ function submitAttempt() {
 
       if (mode === "tutorial") {
         tutorialIndex++;
-        setFeedback(tutorialIndex < TUTORIAL.length ? "nice!" : "tutorial complete!", "good");
+        if (tutorialIndex >= TUTORIAL.length) {
+          setFeedback("tutorial complete!", "good");
+          const elapsed = (Date.now() - startTime) / 1000 / 60;
+          const finalWpm = Math.round(currentWords.length / elapsed);
+          const finalKpc = totalCharacters > 0 ? (totalKeystrokes / totalCharacters).toFixed(2) : "—";
+          setTimeout(() => showTutorialCompleteModal(finalWpm, finalKpc, streak), 750);
+        } else {
+          setFeedback("nice!", "good");
+        }
       } else {
         practicesDone++;
         setFeedback("nice work!", "good");

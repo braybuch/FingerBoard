@@ -2,6 +2,17 @@
    UI HELPERS & MODAL
    ========================================================= */
 
+function showTutorialCompleteModal(wpm, kpc, streakVal) {
+  document.getElementById("tutcomp-wpm").textContent    = wpm      ?? "—";
+  document.getElementById("tutcomp-kpc").textContent    = kpc      ?? "—";
+  document.getElementById("tutcomp-streak").textContent = streakVal ?? "—";
+  document.getElementById("tutorial-complete-modal").classList.remove("hidden");
+}
+
+function dismissTutorialCompleteModal() {
+  document.getElementById("tutorial-complete-modal").classList.add("hidden");
+}
+
 function showWelcomeModal() {
   document.getElementById("welcome-modal").classList.remove("hidden");
   // Reset to slide 0 each time modal opens
