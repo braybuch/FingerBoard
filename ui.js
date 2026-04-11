@@ -449,13 +449,14 @@ function updateTutorialHint() {
   }
 
   // Slot 2 (next suggestion) is the correct word AND is a variation of the ghost word — highlight next button
-  if (kbSuggestions[1] === expected) {
+  if (kbSuggestions[1] === expected && kbSig.length >= 3) {
     const ghost = kbSuggestions[0];
-    const isVariation = kbSig.length >= 3 && (
-      kbSuggestions[1].startsWith(ghost) ||
-      (ghost.length > 1 && kbSuggestions[1].startsWith(ghost.slice(0, -1))) ||
-      (ghost.length > 2 && kbSuggestions[1].startsWith(ghost.slice(0, -2)))
-    );
+    const nextWord = kbSuggestions[1];
+    
+    // Check if nextWord starts with the full ghost word OR ghost word minus last 3 characters
+    const isVariation = 
+      nextWord.startsWith(ghost) ||
+      (ghost.length > 3 && nextWord.startsWith(ghost.slice(0, -3)));
     
     if (isVariation) {
       const nextBtn = document.querySelector(".kb-page-btn");
