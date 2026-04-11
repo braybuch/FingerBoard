@@ -3,15 +3,11 @@
    ========================================================= */
 
 const TUTORIAL = [
-  "hi",
   "welcome to fingerboard",
   "press enter when the word on screen is correct",
   "press next if it is not correct",
-  "fingerboard makes typing more efficient",
   "you do not need to type every letter",
   "but it helps to know where to look",
-  "after a few presses the most likely word will usually appear",
-  "common words become familiar very quickly with practice",
   "soon you will enter longer words without looking at the keyboard",
   "fingerboard is designed for accessible and efficient typing",
   "now begin practicing and let your fingers learn"

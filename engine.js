@@ -30,16 +30,15 @@ let signatureMap = {};
 
 const BUILTIN_WORDS = [
   // tutorial sentence words first — guaranteed first predictions
-  "hi",
   "welcome","to","fingerboard",
   "press","enter","when","the","word","on","screen","is","correct",
-  "next","choose","a","different","matching","full","words","lets","you","type","more","efficiently",
+  "next","choose","a","different","matching","full","words","lets","you","type","more",
   "do","not","need","every","letter",
   "but","it","helps","know","where","look",
   "after","few","presses","most","likely","usually","appear",
   "common","become","familiar","very","quickly","with","practice",
-  "soon","longer","without","looking","at","keyboard",
-  "designed","accessible","and","efficient","typing",
+  "soon","longer","will","without","looking","at","keyboard",
+  "designed","accessible","for","and","efficient","typing",
   "now","begin","practicing","let","your","fingers","learn","patterns",
 
   // practice sentence words
