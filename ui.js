@@ -448,11 +448,19 @@ function updateTutorialHint() {
     return;
   }
 
-  // Slot 2 (next suggestion) is the correct word AND contains current ghost word — highlight next button
-  if (kbSuggestions[1] === expected && kbSuggestions[1].startsWith(kbSuggestions[0])) {
-    const nextBtn = document.querySelector(".kb-page-btn");
-    if (nextBtn) nextBtn.classList.add("tutorial-glow");
-    return;
+  // Slot 2 (next suggestion) is the correct word AND is a variation of the ghost word — highlight next button
+  if (kbSuggestions[1] === expected) {
+    const ghost = kbSuggestions[0];
+    const isVariation = 
+      kbSuggestions[1].startsWith(ghost) ||
+      (ghost.length > 1 && kbSuggestions[1].startsWith(ghost.slice(0, -1))) ||
+      (ghost.length > 2 && kbSuggestions[1].startsWith(ghost.slice(0, -2)));
+    
+    if (isVariation) {
+      const nextBtn = document.querySelector(".kb-page-btn");
+      if (nextBtn) nextBtn.classList.add("tutorial-glow");
+      return;
+    }
   }
 
   // If the sig typed so far is already wrong (a pressed finger doesn't match
