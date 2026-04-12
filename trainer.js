@@ -86,7 +86,7 @@ function updateProgress() {
     label.textContent = tutorialIndex + " / " + TUTORIAL.length;
     modeEl.textContent = "tutorial";
   } else {
-    const pct = Math.min(100, Math.round((practicesDone / 10) * 100));
+    const pct = Math.min(100, Math.round((practicesDone / 5) * 100));
     fill.style.width = pct + "%";
     label.textContent = practicesDone + " completed";
     modeEl.textContent = "free practice";
@@ -151,7 +151,7 @@ function submitAttempt() {
       tutorialHintShown = true;
       clearTutorialGlow();
     }
-    totalCharacters += typed.length;
+    totalCharacters += typed.length + 1;// Include the space for kpc calculation
     correctAttempts++;
     streak++;
     wordIndex++;
@@ -162,6 +162,7 @@ function submitAttempt() {
 
     if (wordIndex >= currentWords.length) {
       flashPromptSuccess();
+      totalCharacters -= 1;  // Remove the trailing space from the last word for kpc calculation
       const elapsed = (Date.now() - startTime) / 1000 / 60;
       const wpm = Math.round(currentWords.length / elapsed);
       const acc = Math.round((correctAttempts / totalAttempts) * 100);
@@ -186,7 +187,7 @@ function submitAttempt() {
         // Record this sentence's result (true = error-free, false = had errors)
         practiceResults.push(!currentSentenceHasErrors);
         practicesDone++;
-        if (practicesDone === 10) {
+        if (practicesDone === 5) {
           const finalKpc = totalCharacters > 0 ? (totalKeystrokes / totalCharacters).toFixed(2) : "-";
           setTimeout(() => showPracticeCompleteModal(wpm, finalKpc, streak, practiceResults), 750);
         } else {
