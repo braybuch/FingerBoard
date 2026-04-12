@@ -44,12 +44,15 @@ let startTime       = null;
 let totalAttempts   = 0;
 let correctAttempts = 0;
 let streak          = 0;
+let currentSentenceHasErrors = false;  // Track if current sentence has any errors
 
 let totalKeystrokes = 0;
 let totalCharacters = 0;
 
 let practiceDeck = [];
 let deckIndex    = 0;
+
+let practiceResults = [];  // Track which sentences were error-free (true) or had errors (false)
 
 function shuffleArray(arr) {
   const a = arr.slice();
@@ -104,6 +107,9 @@ function newRound() {
   } else {
     sentence = nextPracticeSentence();
   }
+  
+  // Reset sentence error tracking at start of new sentence
+  currentSentenceHasErrors = false;
 
   currentWords = sentence.split(" ");
   wordIndex    = 0;
@@ -177,10 +183,12 @@ function submitAttempt() {
           setFeedback("nice!", "good");
         }
       } else {
+        // Record this sentence's result (true = error-free, false = had errors)
+        practiceResults.push(!currentSentenceHasErrors);
         practicesDone++;
         if (practicesDone === 10) {
           const finalKpc = totalCharacters > 0 ? (totalKeystrokes / totalCharacters).toFixed(2) : "-";
-          setTimeout(() => showPracticeCompleteModal(wpm, finalKpc, streak), 750);
+          setTimeout(() => showPracticeCompleteModal(wpm, finalKpc, streak, practiceResults), 750);
         } else {
           setFeedback("nice work!", "good");
         }
@@ -192,6 +200,7 @@ function submitAttempt() {
     }
   } else {
     streak = 0;
+    currentSentenceHasErrors = true;  // Mark sentence as having errors
     document.getElementById("streak-display").textContent = streak;
     const box   = document.getElementById("prompt-box");
     const spans = box.querySelectorAll(".word");

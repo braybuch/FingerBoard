@@ -2,10 +2,12 @@
    UI HELPERS & MODAL
    ========================================================= */
 
-function showPracticeCompleteModal(wpm, kpc, streakVal) {
+function showPracticeCompleteModal(wpm, kpc, streakVal, practiceResults = []) {
   document.getElementById("practcomp-wpm").textContent    = wpm      ?? "—";
   document.getElementById("practcomp-kpc").textContent    = kpc      ?? "—";
   document.getElementById("practcomp-streak").textContent = streakVal ?? "—";
+  // Store practice results for use in copyScoreToClipboard
+  window.currentPracticeResults = practiceResults;
   // Reset copy button in case it was used before
   const btn = document.getElementById("practcomp-copy-btn");
   btn.textContent = "copy my score to clipboard";
@@ -21,7 +23,17 @@ function copyScoreToClipboard() {
   const wpm    = document.getElementById("practcomp-wpm").textContent;
   const kpc    = document.getElementById("practcomp-kpc").textContent;
   const streak = document.getElementById("practcomp-streak").textContent;
-  const text   = `fingerboard champion: ${wpm}wpm, ${kpc}kpc, ${streak} streak\nhttps://BrayBuch.github.io/FingerBoard/`;
+  
+  // Build emoji squares: 🟩 for error-free, 🟥 for errors
+  const results = window.currentPracticeResults || [];
+  const emojiLine = results.map(isCorrect => isCorrect ? "🟩" : "🟥").join("");
+  
+  // Build the formatted score string
+  let text = `FingerBoard\n${wpm} wpm  ${kpc} kpc`;
+  if (emojiLine) {
+    text += `\n${emojiLine}`;
+  }
+  text += `\nhttps://BrayBuch.github.io/FingerBoard/`;
 
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById("practcomp-copy-btn");
